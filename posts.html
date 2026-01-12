@@ -5,16 +5,20 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Gossip Girl – Posts</title>
 
+<link rel="icon" href="https://upload.wikimedia.org/wikipedia/commons/thumb/6/64/Gossip_girl_titlecard.svg/1200px-Gossip_girl_titlecard.svg.png">
 <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
 
 <style>
+/* ===== BASE ===== */
 body {
   margin: 0;
   font-family: 'Roboto', sans-serif;
-  background: url('https://primary.jwwb.nl/public/v/f/z/temp-drvbpvglefwdvbrbqnho/ur18xk/IMG_1169.jpg') no-repeat center center fixed;
+  background: url('https://primary.jwwb.nl/public/v/f/z/temp-drvbpvglefwdvbrbqnho/ur18xk/IMG_1169.jpg')
+    no-repeat center center fixed;
   background-size: cover;
 }
 
+/* ===== TITLE ===== */
 .title {
   display: flex;
   justify-content: center;
@@ -22,6 +26,62 @@ body {
 }
 .title img { width: 300px; }
 
+/* ===== SIDEBAR ===== */
+.right-section {
+  position: fixed;
+  right: 20px;
+  top: 140px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  z-index: 50;
+}
+
+.circle {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background: rgba(185,179,130,.85);
+  color: white;
+  font-size: .75rem;
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  padding-bottom: 5px;
+  cursor: pointer;
+  position: relative;
+  transition: transform .2s;
+}
+
+.circle:hover { transform: scale(1.05); }
+
+.inner-circle {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-size: cover;
+  background-position: center;
+  position: absolute;
+  top: 6px;
+}
+
+.inner-circle.custom {
+  background-image: url("https://i.pinimg.com/736x/cf/84/3e/cf843e8585e57a907af82bb5a86fae48.jpg");
+}
+.inner-circle.home {
+  background-image: url("https://i.pinimg.com/736x/24/24/95/2424950fe4aa72741f9fbb15da01db8a.jpg");
+}
+.inner-circle.posts {
+  background-image: url("https://i.pinimg.com/736x/c3/4f/8f/c34f8ff1b25bcc61a84a116b18d6da42.jpg");
+}
+.inner-circle.pics {
+  background-image: url("https://i.pinimg.com/736x/a5/34/d1/a534d1d47cefbff4e8278618e8909e7e.jpg");
+}
+.inner-circle.links {
+  background-image: url("https://i.pinimg.com/736x/75/ea/b6/75eab607a119fd5a449339dfdcd0ab57.jpg");
+}
+
+/* ===== CARDS ===== */
 .post-card {
   max-width: 420px;
   margin: 30px auto;
@@ -45,6 +105,7 @@ body {
   gap: 25px;
 }
 
+/* ===== FORMS ===== */
 input, textarea {
   width: 100%;
   padding: 10px;
@@ -81,8 +142,18 @@ button.secondary {
 
 <body>
 
+<!-- TITLE -->
 <div class="title">
   <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/6/64/Gossip_girl_titlecard.svg/1200px-Gossip_girl_titlecard.svg.png">
+</div>
+
+<!-- SIDEBAR -->
+<div class="right-section">
+  <div class="circle" onclick="location.href='custom.html'"><div class="inner-circle custom"></div>custom</div>
+  <div class="circle" onclick="location.href='index.html'"><div class="inner-circle home"></div>home</div>
+  <div class="circle"><div class="inner-circle posts"></div>posts</div>
+  <div class="circle" onclick="location.href='pics.html'"><div class="inner-circle pics"></div>pics</div>
+  <div class="circle" onclick="location.href='links.html'"><div class="inner-circle links"></div>links</div>
 </div>
 
 <!-- LOGIN -->
@@ -125,22 +196,23 @@ const loginBox = document.getElementById("loginBox");
 const postForm = document.getElementById("postForm");
 const postsDiv = document.getElementById("posts");
 
+/* LOGIN */
 function login() {
-  auth.signInWithEmailAndPassword(
-    email.value,
-    password.value
-  ).catch(err => alert(err.message));
+  auth.signInWithEmailAndPassword(email.value, password.value)
+    .catch(err => alert(err.message));
 }
 
 function logout() {
   auth.signOut();
 }
 
+/* AUTH STATE */
 auth.onAuthStateChanged(user => {
   loginBox.style.display = user ? "none" : "block";
   postForm.style.display = user ? "block" : "none";
 });
 
+/* ADD POST */
 function addPost() {
   if (!postTitle.value || !postBody.value) {
     alert("Fill everything");
@@ -159,6 +231,7 @@ function addPost() {
   postImage.value = "";
 }
 
+/* LOAD POSTS */
 db.collection("posts").orderBy("time", "desc")
 .onSnapshot(snapshot => {
   postsDiv.innerHTML = "";
@@ -175,6 +248,7 @@ db.collection("posts").orderBy("time", "desc")
   });
 });
 
+/* DELETE */
 function deletePost(id) {
   if (confirm("Delete post?")) {
     db.collection("posts").doc(id).delete();
@@ -184,3 +258,4 @@ function deletePost(id) {
 
 </body>
 </html>
+
