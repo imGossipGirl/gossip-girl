@@ -8,10 +8,7 @@
 <link rel="icon" href="https://upload.wikimedia.org/wikipedia/commons/thumb/6/64/Gossip_girl_titlecard.svg/1200px-Gossip_girl_titlecard.svg.png">
 
 <!-- Leaflet -->
-<link
-  rel="stylesheet"
-  href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
-/>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
 <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
@@ -21,7 +18,7 @@ body, html {
   margin: 0;
   padding: 0;
   font-family: 'Roboto', sans-serif;
-  background: url('https://primary.jwwb.nl/public/v/f/z/temp-drvbpvglefwdvbrbqnho/ur18xk/IMG_1169.jpg?enable-io=true&enable=upscale&crop=1600%2C795%2Cx0%2Cy0%2Csafe&width=980&height=487')
+  background: url('https://primary.jwwb.nl/public/v/f/z/temp-drvbpvglefwdvbrbqnho/ur18xk/IMG_1169.jpg')
     no-repeat center center fixed;
   background-size: cover;
 }
@@ -78,6 +75,7 @@ button.secondary {
 }
 </style>
 </head>
+
 <body>
 
 <div class="container">
@@ -93,99 +91,95 @@ button.secondary {
     <div id="map"></div>
   </div>
 
-  <!-- Admin Login -->
-  <div id="adminLogin" class="card" style="display:none;">
-    <h3>Gossip Girl Access</h3>
-    <input type="password" id="adminPass" placeholder="Password">
-    <button onclick="loginAdmin()">Enter</button>
+  <!-- LOGIN -->
+  <div id="loginBox" class="card" style="display:none;">
+    <h3>Gossip Girl Login</h3>
+    <input id="email" placeholder="Email">
+    <input id="password" type="password" placeholder="Password">
+    <button onclick="login()">Login</button>
   </div>
 
-  <!-- Admin Form -->
+  <!-- ADMIN FORM -->
   <div id="adminForm" class="card" style="display:none;">
     <h3>Add Sighting</h3>
     <input id="spotName" placeholder="Who was spotted?">
     <textarea id="spotNote" placeholder="Details"></textarea>
-    <input id="spotImage" placeholder="Image URL">
+    <input id="spotImage" placeholder="Image URL (https://...)">
     <button onclick="saveSpot()">Save Sighting</button>
-    <button class="secondary" onclick="logoutAdmin()">Logout</button>
+    <button class="secondary" onclick="logout()">Logout</button>
   </div>
 
 </div>
 
+<!-- Firebase -->
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+
 <script>
-/* ===== CONFIG ===== */
-const ADMIN_PASSWORD = "xoxo";
-let selectedLatLng = null;
+/* ===== FIREBASE INIT ===== */
+firebase.initializeApp({
+  apiKey: "AIzaSyAG70-TmzFjnvgZhRkPR1DuDOrTComfwsc",
+  authDomain: "gossip-girl-4e394.firebaseapp.com",
+  projectId: "gossip-girl-4e394"
+});
+
+const auth = firebase.auth();
+const db = firebase.firestore();
 
 /* ===== MAP ===== */
-const map = L.map("map").setView([40.7831, -73.9712], 12); // Manhattan
-
+const map = L.map("map").setView([40.7831, -73.9712], 12);
 L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
   attribution: "© OpenStreetMap"
 }).addTo(map);
 
+let selectedLatLng = null;
 let markers = [];
 
-/* ===== AUTH ===== */
-function loginAdmin() {
-  if (adminPass.value === ADMIN_PASSWORD) {
-    localStorage.setItem("ggAdmin", "true");
-    adminLogin.style.display = "none";
-    adminForm.style.display = "block";
-  } else {
-    alert("Wrong password.");
-  }
-}
-
-function logoutAdmin() {
-  localStorage.removeItem("ggAdmin");
-  location.reload();
-}
-
-/* ===== SPOTS ===== */
-function loadSpots() {
-  const spots = JSON.parse(localStorage.getItem("ggSpots")) || [];
-  markers.forEach(m => map.removeLayer(m));
-  markers = [];
-
-  spots.forEach((s, index) => {
-    const marker = L.marker([s.lat, s.lng]).addTo(map);
-    marker.bindPopup(`
-      <strong>${s.name}</strong><br>
-      ${s.note || ""}<br>
-      ${s.image ? `<img src="${s.image}" style="width:150px;margin-top:6px;">` : ""}
-      ${localStorage.getItem("ggAdmin") === "true"
-        ? `<br><button onclick="deleteSpot(${index})">Delete</button>`
-        : ""}
-    `);
-    markers.push(marker);
-  });
-}
-
-map.on("click", e => {
-  if (localStorage.getItem("ggAdmin") !== "true") return;
-  selectedLatLng = e.latlng;
-  alert("Location selected. Fill out the form to add the sighting.");
+/* ===== AUTH UI ===== */
+auth.onAuthStateChanged(user => {
+  loginBox.style.display = user ? "none" : "block";
+  adminForm.style.display = user ? "block" : "none";
 });
 
-/* ===== SAVE ===== */
+/* ===== LOGIN ===== */
+function login() {
+  auth.signInWithEmailAndPassword(email.value, password.value)
+    .catch(err => alert(err.message));
+}
+
+function logout() {
+  auth.signOut();
+}
+
+/* ===== CLICK TO SELECT LOCATION ===== */
+map.on("click", e => {
+  if (!auth.currentUser) return;
+  selectedLatLng = e.latlng;
+  alert("Location selected. Now save the sighting.");
+});
+
+/* ===== SAVE SPOT ===== */
 function saveSpot() {
   if (!selectedLatLng) {
     alert("Click a location on the map first.");
     return;
   }
 
-  const spots = JSON.parse(localStorage.getItem("ggSpots")) || [];
-  spots.push({
+  if (!spotName.value) {
+    alert("Enter a name.");
+    return;
+  }
+
+  db.collection("spots").add({
     name: spotName.value,
     note: spotNote.value,
     image: spotImage.value,
     lat: selectedLatLng.lat,
-    lng: selectedLatLng.lng
+    lng: selectedLatLng.lng,
+    time: Date.now(),
+    by: auth.currentUser.email
   });
-
-  localStorage.setItem("ggSpots", JSON.stringify(spots));
-  loadSpots();
 
   spotName.value = "";
   spotNote.value = "";
@@ -193,25 +187,35 @@ function saveSpot() {
   selectedLatLng = null;
 }
 
-/* ===== DELETE ===== */
-function deleteSpot(index) {
-  if (!confirm("Delete this sighting?")) return;
-  const spots = JSON.parse(localStorage.getItem("ggSpots")) || [];
-  spots.splice(index, 1);
-  localStorage.setItem("ggSpots", JSON.stringify(spots));
-  loadSpots();
-}
+/* ===== LOAD SPOTS (PUBLIC) ===== */
+db.collection("spots").orderBy("time", "desc")
+.onSnapshot(snapshot => {
+  markers.forEach(m => map.removeLayer(m));
+  markers = [];
 
-/* ===== INIT ===== */
-window.onload = () => {
-  loadSpots();
-  if (localStorage.getItem("ggAdmin") === "true") {
-    adminForm.style.display = "block";
-  } else {
-    adminLogin.style.display = "block";
+  snapshot.forEach(doc => {
+    const s = doc.data();
+    const marker = L.marker([s.lat, s.lng]).addTo(map);
+
+    marker.bindPopup(`
+      <strong>${s.name}</strong><br>
+      ${s.note || ""}<br>
+      ${s.image ? `<img src="${s.image}" style="width:150px;margin-top:6px;">` : ""}
+      ${auth.currentUser ? `<br><button class="delete-btn" onclick="deleteSpot('${doc.id}')">Delete</button>` : ""}
+    `);
+
+    markers.push(marker);
+  });
+});
+
+/* ===== DELETE ===== */
+function deleteSpot(id) {
+  if (confirm("Delete this sighting?")) {
+    db.collection("spots").doc(id).delete();
   }
-};
+}
 </script>
 
 </body>
 </html>
+
