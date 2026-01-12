@@ -1,0 +1,227 @@
+<div class="card" style="text-align:center;">
+  <button onclick="window.location.href='index.html'">
+    ← Back to Home
+  </button>
+</div>
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gossip Girl — Send a Tip</title>
+
+<link rel="icon" href="https://upload.wikimedia.org/wikipedia/commons/thumb/6/64/Gossip_girl_titlecard.svg/1200px-Gossip_girl_titlecard.svg.png">
+
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+
+<style>
+body, html {
+  margin: 0;
+  padding: 0;
+  font-family: 'Roboto', sans-serif;
+  background: url('https://primary.jwwb.nl/public/v/f/z/temp-drvbpvglefwdvbrbqnho/ur18xk/IMG_1169.jpg?enable-io=true&enable=upscale&crop=1600%2C795%2Cx0%2Cy0%2Csafe&width=980&height=487')
+    no-repeat center center fixed;
+  background-size: cover;
+  color: #333;
+}
+
+/* Container */
+.container {
+  max-width: 600px;
+  margin: 40px auto;
+  padding: 20px;
+}
+
+/* Card */
+.card {
+  background: rgba(255,255,255,0.96);
+  border-radius: 14px;
+  padding: 20px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.4);
+  margin-bottom: 30px;
+}
+
+.card h3 {
+  font-family: 'Playfair Display', serif;
+  text-align: center;
+  margin-bottom: 15px;
+}
+
+/* Inputs */
+input, textarea {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 12px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  font-family: inherit;
+}
+
+textarea {
+  resize: vertical;
+  min-height: 100px;
+}
+
+/* Buttons */
+button {
+  width: 100%;
+  padding: 10px;
+  background: #111;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+button.secondary {
+  margin-top: 8px;
+  background: transparent;
+  color: #555;
+  border: 1px solid #ccc;
+}
+
+/* Tip cards */
+.tip {
+  border-top: 1px solid #ddd;
+  padding-top: 15px;
+  margin-top: 15px;
+}
+
+.tip img {
+  width: 100%;
+  border-radius: 10px;
+  margin: 10px 0;
+}
+
+.meta {
+  font-size: 0.75rem;
+  color: #777;
+}
+</style>
+</head>
+<body>
+
+<div class="container">
+
+  <!-- SEND TIP -->
+  <div class="card">
+    <h3>Send a Tip to Gossip Girl</h3>
+
+    <input id="senderEmail" type="email" placeholder="Your email (required)">
+    <input id="tipCaption" placeholder="Caption">
+    <textarea id="tipContext" placeholder="Context / gossip"></textarea>
+    <input id="tipImage" placeholder="Image URL (optional)">
+
+    <button onclick="submitTip()">Send Tip</button>
+  </div>
+
+  <!-- ADMIN LOGIN -->
+  <div id="loginBox" class="card" style="display:none;">
+    <h3>Admin Access</h3>
+    <input type="password" id="adminPass" placeholder="Password">
+    <button onclick="unlockInbox()">Enter</button>
+  </div>
+
+  <!-- INBOX -->
+  <div id="inbox" class="card" style="display:none;">
+    <h3>Gossip Girl Inbox</h3>
+    <div id="tips"></div>
+    <button class="secondary" onclick="logout()">Logout</button>
+  </div>
+
+</div>
+
+<script>
+/* ===== CONFIG ===== */
+const ADMIN_PASSWORD = "xoxo";
+
+/* ===== SUBMIT TIP ===== */
+function submitTip() {
+  const email = senderEmail.value;
+  if (!email) return alert("Email is required.");
+
+  const tip = {
+    email,
+    caption: tipCaption.value,
+    context: tipContext.value,
+    image: tipImage.value,
+    time: new Date().toLocaleString()
+  };
+
+  const tips = JSON.parse(localStorage.getItem("ggTips")) || [];
+  tips.unshift(tip);
+  localStorage.setItem("ggTips", JSON.stringify(tips));
+
+  alert("Tip sent to Gossip Girl 💋");
+
+  senderEmail.value = "";
+  tipCaption.value = "";
+  tipContext.value = "";
+  tipImage.value = "";
+}
+
+/* ===== ADMIN ===== */
+function unlockInbox() {
+  if (adminPass.value === ADMIN_PASSWORD) {
+    localStorage.setItem("ggAdmin", "true");
+    showInbox();
+  } else {
+    alert("Wrong password.");
+  }
+}
+
+function logout() {
+  localStorage.removeItem("ggAdmin");
+  location.reload();
+}
+
+function showInbox() {
+  loginBox.style.display = "none";
+  inbox.style.display = "block";
+
+  const tipsData = JSON.parse(localStorage.getItem("ggTips")) || [];
+  tips.innerHTML = "";
+
+  tipsData.forEach((t, index) => {
+  const div = document.createElement("div");
+  div.className = "tip";
+
+  div.innerHTML = `
+    <p><strong>${t.caption || "No caption"}</strong></p>
+    <p>${t.context || ""}</p>
+    ${t.image ? `<img src="${t.image}">` : ""}
+    <p class="meta">From: ${t.email}</p>
+    <p class="meta">${t.time}</p>
+    <button class="delete-btn" onclick="deleteTip(${index})">Delete</button>
+  `;
+
+  tips.appendChild(div);
+});
+
+}
+
+/* ===== INIT ===== */
+window.onload = () => {
+  if (localStorage.getItem("ggAdmin") === "true") {
+    showInbox();
+  } else {
+    loginBox.style.display = "block";
+  }
+};
+</script>
+
+</body>
+</html>
+
+<script>
+function deleteTip(index) {
+  if (!confirm("Delete this tip?")) return;
+
+  const tipsData = JSON.parse(localStorage.getItem("ggTips")) || [];
+  tipsData.splice(index, 1);
+  localStorage.setItem("ggTips", JSON.stringify(tipsData));
+  showInbox();
+}
+</script>
