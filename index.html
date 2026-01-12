@@ -1,575 +1,176 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+<meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Gossip Girl - Website Template by Inês Reis</title>
-<meta name="description" content="Gossip Girl website template in HTML by Inês Reis. All rights reserved by Gossip Girl. Customize your own gossipgirl post!" />
-<meta property="og:description" content="Gossip Girl website template in HTML by Inês Reis. All rights reserved by Gossip Girl. Customize your own gossipgirl post!" />
-<meta property="og:title" content="Gossip Girl - Website Template by Inês Reis"/>
-<link rel="icon" type="image/png" sizes="32x32" href="https://upload.wikimedia.org/wikipedia/commons/thumb/6/64/Gossip_girl_titlecard.svg/1200px-Gossip_girl_titlecard.svg.png">
-<meta name="google-adsense-account" content="ca-pub-7773778866708742">
-<meta name="p:domain_verify" content="157cc04a149e352ddf504ac1489079a8"/>
-<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+<title>Gossip Girl</title>
 
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-GTLQ4VKFB1"></script>
-<script src="include.js" defer></script>
-<script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
-
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-  gtag('config', 'G-GTLQ4VKFB1');
-</script>
+<link rel="icon" href="https://upload.wikimedia.org/wikipedia/commons/thumb/6/64/Gossip_girl_titlecard.svg/1200px-Gossip_girl_titlecard.svg.png">
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
 
 <style>
-    @font-face {
-        font-family: 'FontNeue Helvetica 33 Thin Extended';
-        src: url('../media/dev/gossip-girl/Helvetica\ Neue\ LT\ Std\ 33\ Thin\ Extended.otf') format('opentype');
-        font-weight: normal;
-        font-style: normal;
-    }
-
-    body, html {
-        margin: 0;
-        padding: 0;
-        overflow-x: hidden;
-        height: 100%;
-    }
-
-    body {
-        background: url('https://primary.jwwb.nl/public/v/f/z/temp-drvbpvglefwdvbrbqnho/ur18xk/IMG_1169.jpg?enable-io=true&enable=upscale&crop=1600%2C795%2Cx0%2Cy0%2Csafe&width=980&height=487') no-repeat center center fixed;
-        background-size: cover;
-        font-family: 'FontNeue Helvetica 33 Thin Extended', sans-serif;
-        font-weight: 100;
-        margin: 0;
-        padding: 0;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: flex-start;
-        text-align: center;
-    }
-
-    /* --- Desktop Layout --- */
-    .container {
-        display: flex;
-        flex-direction: row;
-        justify-content: center;
-        align-items: flex-start;
-        gap: 40px;
-        flex-wrap: wrap;
-        width: 100%;
-        padding: 0 20px;
-        margin-top: 20px;
-    }
-
-    .title {
-        margin-top: 20px;
-        margin-bottom: -40px;
-        line-height: 1;
-    }
-
-    .title img {
-        max-width: 697px;
-        width: 100%;
-        height: auto;
-    }
-
-    /* Left Section Styling (Text) */
-    .left-section {
-        text-align: left;
-        background-color: transparent;
-    }
-    .left-section h3 { margin-bottom: 0; font-size: 1.1rem; }
-    .left-section p { margin-top: 0; color: #7A7A7D; font-size: 0.9rem; }
-    .left-section h3:nth-of-type(1) { color: #4097C7; }
-    .left-section h3:nth-of-type(2) { color: #CE8062; }
-    .left-section h3:nth-of-type(3) { color: #D1D4AA; }
-    .left-section h3:nth-of-type(4) { color: #CF7B9A; }
-    .left-section h3:nth-of-type(5) { color: #A1C357; }
-    
-    u { color: #7bbacc; cursor: pointer; }
-    .left-section h3:nth-of-type(3) + p u { display: inline-block; padding-left: 17px; }
-
-    /* Main Card (Serena Box) */
-    .main-card {
-        background: white;
-        color: #3D4046;
-        padding: 20px;
-        border-radius: 10px;
-        text-align: center;
-        width: 316px;
-        height: auto;
-        min-height: 404px;
-        font-weight: normal;
-        font-family: 'FontNeue Helvetica 33 Thin Extended', sans-serif;
-        text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.4);
-        position: relative;
-        box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-    }
-
-    .main-card img {
-        width: 232px;
-        height: 272px;
-        object-fit: cover;
-        margin-top: 10px;
-    }
-
-    .description {
-        width: 280px;
-        margin: 10px auto;
-        text-align: justify;
-        color: #3D4046;
-        font-size: 0.9rem;
-    }
-
-    .signature {
-        text-align: right;
-        color: #7bbacc;
-        font-size: 0.8rem;
-        margin-top: 5px;
-    }
-
-    /* Right Section (Circles) */
-    .right-section {
-        display: flex;
-        flex-direction: column;
-        gap: 10px;
-        height: 420px;
-    }
-
-    .circle {
-        width: 65px;
-        height: 64px;
-        background: #B9B382;
-        border-radius: 50%;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: flex-end;
-        padding-bottom: 5px;
-        position: relative;
-        color: #544F31;
-        cursor: pointer;
-        transition: transform 0.2s;
-    }
-    
-    .circle:hover { transform: scale(1.05); }
-
-    .inner-circle {
-        width: 44px;
-        height: 45px;
-        background-size: cover;
-        background-position: center;
-        border-radius: 50%;
-        position: absolute;
-        top: 1px;
-    }
-
-    .inner-circle.custom {
-  background-image: url('https://t3.ftcdn.net/jpg/03/58/90/78/360_F_358907879_Vdu96gF4XVhjCZxN2kCG0THTsSQi8IhT.jpg');
+body, html {
+  margin: 0;
+  padding: 0;
+  font-family: 'Roboto', sans-serif;
+  background: url('https://primary.jwwb.nl/public/v/f/z/temp-drvbpvglefwdvbrbqnho/ur18xk/IMG_1169.jpg') no-repeat center center fixed;
+  background-size: cover;
 }
 
-.inner-circle.home {
-  background-image: url('/media/dev/gossip-girl/thumbnails_nate-archibald-gossip-girl.jpg');
+/* Header */
+.title {
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+}
+.title img { width: 350px; }
+
+/* Layout */
+.container {
+  display: flex;
+  justify-content: center;
+  gap: 40px;
+  margin-top: 20px;
+  flex-wrap: wrap;
 }
 
-.inner-circle.posts {
-  background-image: url('/media/dev/gossip-girl/thumbnails_chuck-bass-gossip-girl.jpg');
+/* Left text */
+.left-section {
+  text-align: left;
+}
+.left-section h3 { margin-bottom: 0; }
+.left-section p { margin-top: 0; color: #777; }
+
+/* Card */
+.main-card {
+  background: white;
+  padding: 20px;
+  border-radius: 12px;
+  width: 320px;
+  box-shadow: 0 10px 25px rgba(0,0,0,.4);
+}
+.main-card img {
+  width: 100%;
+  border-radius: 10px;
+  margin: 10px 0;
+}
+.description {
+  font-size: .9rem;
+}
+.signature {
+  text-align: right;
+  color: #7bbacc;
+  font-size: .8rem;
 }
 
-.inner-circle.pics {
-  background-image: url('/media/dev/gossip-girl/thumbnails_blair-waldorf-gossip-girl.png');
+/* Admin editor */
+#homeEditor {
+  display: none;
+  margin-top: 15px;
+}
+#homeEditor input,
+#homeEditor textarea {
+  width: 100%;
+  padding: 8px;
+  margin-bottom: 8px;
 }
 
-.inner-circle.links {
-  background-image: url('/media/dev/gossip-girl/thumbnails_ivy-dickens-gossip-girl.webp');
+/* Buttons */
+button {
+  padding: 8px;
+  width: 100%;
+  background: black;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
 }
-
-
-
-    /* --- Custom Form (Popup) --- */
-    #customForm {
-        display: none; 
-        position: absolute; 
-        top: 50%; 
-        left: 50%; 
-        transform: translate(-50%, -50%);
-        background: white; 
-        padding: 20px;
-        width: 85%;
-        border-radius: 10px; 
-        box-shadow: 0px 4px 20px rgba(0,0,0,0.5);
-        z-index: 100;
-        border: 1px solid #ccc;
-        text-align: left;
-    }
-    
-    #customForm label { font-size: 0.8rem; font-weight: bold; }
-    #customForm input, #customForm textarea { width: 100%; margin-bottom: 10px; box-sizing: border-box; }
-    
-    /* Styled buttons for better UI */
-    .btn-group {
-        display: flex;
-        flex-direction: column;
-        gap: 5px;
-        align-items: center;
-    }
-    
-    .btn-main {
-        background-color: #B9B382;
-        color: white;
-        border: none;
-        padding: 8px 16px;
-        cursor: pointer;
-        border-radius: 5px;
-        width: 100%;
-        font-family: inherit;
-    }
-    
-    .btn-secondary {
-        background-color: transparent;
-        color: #555;
-        border: 1px solid #ccc;
-        padding: 5px 10px;
-        cursor: pointer;
-        border-radius: 5px;
-        width: 100%;
-        font-family: inherit;
-    }
-    
-    .btn-main:hover { background-color: #a8a272; }
-
-    /* --- Credit Tag --- */
-    .credit-tag {
-        position: fixed;
-        bottom: 20px;
-        right: 20px;
-        background-color: black;
-        color: white;
-        padding: 8px 15px;
-        text-decoration: none;
-        font-family: 'FontNeue Helvetica 33 Thin Extended', sans-serif;
-        font-size: 0.8rem;
-        letter-spacing: 1px;
-        z-index: 1000;
-        border: 1px solid white;
-        box-shadow: 2px 2px 5px rgba(0,0,0,0.5);
-        transition: background-color 0.3s;
-    }
-
-    .credit-tag:hover {
-        background-color: #333;
-    }
-
-    /* --- Mobile Styling --- */
-    @media (max-width: 768px) {
-        body {
-            background-position: top center; 
-        }
-
-        .container {
-            flex-direction: column; 
-            gap: 20px;
-            align-items: center;
-            margin-top: 0;
-            padding-bottom: 60px;
-        }
-
-        .title {
-            margin-bottom: 10px;
-            padding: 0 10px;
-        }
-
-        /* REORDERING FOR MOBILE: 1. Card, 2. Circles, 3. Text */
-        .main-card {
-            order: 1;
-            width: 85%;
-            margin: 0 auto;
-        }
-
-        .right-section {
-            order: 2;
-            flex-direction: row;
-            height: auto;
-            flex-wrap: wrap;
-            justify-content: center;
-            margin: 10px 0;
-        }
-
-        .left-section {
-            order: 3;
-            text-align: center;
-        }
-        
-        .main-card img {
-            width: 100%;
-            max-width: 232px;
-            height: auto;
-        }
-        
-        .credit-tag {
-            bottom: 10px;
-            right: 10px;
-            font-size: 0.7rem;
-            padding: 6px 10px;
-        }
-    }
 </style>
 </head>
+
 <body>
 
-    <h1 class="title">
-<img src="/media/dev/gossip-girl/thumbnails_gossip-girl-font.png">
-    </h1>
-
-    <div class="container">
-        
-        <div class="left-section">
-            <h3>welcome</h3>
-            <p>to Gossip Girl!<br>THE Site ABOUT the<br>Upper East Side,<br>FOR the Upper East<br>Side and BY the<br>Upper East Side!</p>
-            <h3>gossip</h3>
-            <p>The latest "411"<br>on all the in people.</p>
-<h3>pics</h3>
-<p>
-  See what the fashionistas<br>
-  on the UES are wearing.<br>
-  <u onclick="window.location.href='pics.html'">CURRENT PHOTO</u><br>
-  <u onclick="window.location.href='pics.html'">GALLERY</u>
-</p>
-
-<h3>parties</h3>
-<p>
-  Your invitation was<br>
-  probably lost in the mail!<br>
-  <u onclick="window.location.href='parties.html'">CLICK HERE</u> to see<br>
-  what you missed.
-</p>
-
-<h3>links</h3>
-
-       </div>
-
-        <div class="main-card">
-            <p class="spotted"><strong>Spotted: Serena van der Woodsen</strong></p>
-            
-            <img src="../media/dev/gossip-girl/gossip-girl-serena-van-der-woodsen.png" alt="Serena van der Woodsen">
-            
-            <p class="description">Gossip Girl here, your one and only source into the scandalous lives of Manhattan's elite.</p>
-            <p class="signature">xo xo GOSSIP GIRL</p>
-            <!-- Admin editor for Gossip Girl -->
-<div id="homeEditor" style="display:none; margin-top:15px;">
-  <input id="editName" placeholder="Spotted: Name">
-  <input id="editImage" placeholder="Image URL">
-  <textarea id="editCaption" placeholder="Caption"></textarea>
-  <button onclick="saveHomePost()">Save</button>
+<div class="title">
+  <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/6/64/Gossip_girl_titlecard.svg/1200px-Gossip_girl_titlecard.svg.png">
 </div>
 
+<div class="container">
 
-            <div id="customForm">
-                <label>Change Name:</label>
-                <input type="text" id="customName" placeholder="Enter name">
-                
-                <label>Upload Image (File):</label>
-                <input type="file" id="customImage">
+  <div class="left-section">
+    <h3>welcome</h3>
+    <p>to Gossip Girl!<br>THE Site ABOUT the<br>Upper East Side.</p>
 
-                <label>OR Image URL:</label>
-                <input type="text" id="customImageUrl" placeholder="Paste image address here">
-                
-                <label>Caption:</label>
-                <textarea id="customCaption" rows="3" placeholder="Enter caption"></textarea>
-                
-                <div class="btn-group">
-                    <button class="btn-main" onclick="applyChanges()">Update Post</button>
-                    <button class="btn-main" style="background-color: #4097C7;" onclick="downloadPost()">Save as Image</button>
-                    <button class="btn-secondary" onclick="closeForm()">Cancel</button>
-                </div>
-            </div>
-        </div>
+    <h3>pics</h3>
+    <p><u onclick="location.href='pics.html'">CURRENT PHOTO</u></p>
 
-        <div class="right-section">
-            <div class="circle" onclick="window.location.href='custom.html'">
-    <div class="inner-circle custom"></div>custom
-</div>
+    <h3>parties</h3>
+    <p><u onclick="location.href='parties.html'">CLICK HERE</u></p>
+  </div>
 
-            <div class="circle">
-                <div class="inner-circle home"></div>home
-            </div>
-            <div class="circle">
-                <div class="inner-circle posts"></div>posts
-            </div>
-            <div class="circle">
-                <div class="inner-circle pics"></div>pics
-            </div>
-            <div class="circle">
-                <div class="inner-circle links"></div>links
-            </div>
-        </div>
+  <div class="main-card">
+    <p class="spotted"><strong>Spotted:</strong></p>
 
+    <img src="" alt="Spotted">
+
+    <p class="description"></p>
+    <p class="signature">xo xo GOSSIP GIRL</p>
+
+    <!-- ADMIN EDITOR -->
+    <div id="homeEditor">
+      <input id="editName" placeholder="Spotted name">
+      <input id="editImage" placeholder="Image URL">
+      <textarea id="editCaption" placeholder="Caption"></textarea>
+      <button onclick="saveHomePost()">Save</button>
     </div>
+  </div>
 
-    <a href="https://inesreisx.com/" target="_blank" class="credit-tag">by inesreisx</a>
+</div>
+
+<!-- FIREBASE -->
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
 
 <script>
-    function applyChanges() {
-        let name = document.getElementById("customName").value;
-        let caption = document.getElementById("customCaption").value;
-        let imageFile = document.getElementById("customImage").files[0];
-        let imageUrl = document.getElementById("customImageUrl").value;
+firebase.initializeApp({
+  apiKey: "AIzaSyAG70-TmzFjnvgZhRkPR1DuDOrTComfwsc",
+  authDomain: "gossip-girl-4e394.firebaseapp.com",
+  projectId: "gossip-girl-4e394"
+});
 
-        if (name) {
-            document.querySelector(".main-card .spotted").innerHTML = `<strong>Spotted: ${name}</strong>`;
-        }
-        if (caption) {
-            document.querySelector(".main-card .description").innerText = caption;
-        }
+const auth = firebase.auth();
+const db = firebase.firestore();
 
-        if (imageFile) {
-            let reader = new FileReader();
-            reader.onload = function(event) {
-                document.querySelector(".main-card img").src = event.target.result;
-            };
-            reader.readAsDataURL(imageFile);
-        } else if (imageUrl) {
-            document.querySelector(".main-card img").src = imageUrl;
-        }
-        
-        // We don't close the form immediately if they want to download next
-        alert("Updated! You can now click 'Save as Image' or Cancel.");
-    }
+const spottedText = document.querySelector(".spotted strong");
+const postImage   = document.querySelector(".main-card img");
+const postCaption = document.querySelector(".description");
+const editor      = document.getElementById("homeEditor");
 
-    function downloadPost() {
-        // 1. Hide the editing form so it doesn't show in the screenshot
-        const form = document.getElementById("customForm");
-        form.style.display = "none";
-        
-        // 2. Select the card
-        const card = document.querySelector(".main-card");
+/* LOAD HOME POST (PUBLIC) */
+db.collection("home").doc("main").onSnapshot(doc => {
+  if (!doc.exists) return;
+  const d = doc.data();
+  spottedText.textContent = "Spotted: " + d.name;
+  postImage.src = d.image;
+  postCaption.textContent = d.caption;
+});
 
-        // 3. Use html2canvas to take the picture
-        html2canvas(card, {
-            useCORS: true, // Helps with images from URL
-            scale: 2       // Makes the image higher quality (sharper)
-        }).then(canvas => {
-            // 4. Create a fake link to trigger download
-            const link = document.createElement('a');
-            link.download = 'gossip-girl-post.png';
-            link.href = canvas.toDataURL();
-            link.click();
+/* SHOW EDITOR ONLY IF LOGGED IN */
+auth.onAuthStateChanged(user => {
+  editor.style.display = user ? "block" : "none";
+});
 
-            // 5. Show the form again (or keep it closed, your choice. keeping closed here.)
-            // If you want it to reopen, uncomment the next line:
-            // form.style.display = "block";
-        }).catch(err => {
-            console.error("Screenshot failed:", err);
-            alert("Oops! Could not save image. If you used a URL, try uploading the file instead.");
-            form.style.display = "block"; // Re-show form on error
-        });
-    }
-
-    function closeForm() {
-        document.getElementById("customForm").style.display = "none";
-    }
+/* SAVE HOME POST */
+function saveHomePost() {
+  db.collection("home").doc("main").set({
+    name: document.getElementById("editName").value,
+    image: document.getElementById("editImage").value,
+    caption: document.getElementById("editCaption").value,
+    time: Date.now()
+  }).then(() => alert("Updated 💋"));
+}
 </script>
 
 </body>
 </html>
 
-<script>
-  // Right-section navigation
-  const rightCircles = document.querySelectorAll('.right-section .circle');
-
-  rightCircles.forEach(circle => {
-    const label = circle.textContent.trim().toLowerCase();
-
-    // Skip the 'custom' circle
-    if (label === 'custom') return;
-
-    circle.style.cursor = 'pointer'; // Ensure it looks clickable
-
-    circle.addEventListener('click', () => {
-      // Map each label to the page you want
-      const pageMap = {
-        home: 'home.html',
-        posts: 'posts.html',
-        pics: 'pics.html',
-        links: 'links.html'
-      };
-
-      const target = pageMap[label];
-      if (target) window.location.href = target;
-    });
-  });
-</script>
-
-<script>
-/* Is Gossip Girl logged in? */
-const isAdmin = localStorage.getItem("ggAdmin") === "true";
-
-/* Page elements */
-const spottedText = document.querySelector(".main-card .spotted strong");
-const postImage = document.querySelector(".main-card img");
-const postCaption = document.querySelector(".main-card .description");
-const editor = document.getElementById("homeEditor");
-
-/* Load saved post (if one exists) */
-const savedPost = JSON.parse(localStorage.getItem("ggHomePost"));
-if (savedPost) {
-  spottedText.textContent = savedPost.name;
-  postImage.src = savedPost.image;
-  postCaption.textContent = savedPost.caption;
-}
-
-/* Show editor only to Gossip Girl */
-if (isAdmin && editor) {
-  editor.style.display = "block";
-}
-
-/* Save changes */
-function saveHomePost() {
-  const post = {
-    name: document.getElementById("editName").value || spottedText.textContent,
-    image: document.getElementById("editImage").value || postImage.src,
-    caption: document.getElementById("editCaption").value || postCaption.textContent
-  };
-
-  localStorage.setItem("ggHomePost", JSON.stringify(post));
-
-  spottedText.textContent = post.name;
-  postImage.src = post.image;
-  postCaption.textContent = post.caption;
-
-  alert("Home post updated 💋");
-}
-</script>
-
-<script>
-/* Force-load circle images (Neocities-safe fix) */
-document.addEventListener("DOMContentLoaded", () => {
-  const imageMap = {
-    custom: "https://i.pinimg.com/736x/cf/84/3e/cf843e8585e57a907af82bb5a86fae48.jpg",
-    home: "https://i.pinimg.com/736x/24/24/95/2424950fe4aa72741f9fbb15da01db8a.jpg",
-    posts: "https://i.pinimg.com/736x/c3/4f/8f/c34f8ff1b25bcc61a84a116b18d6da42.jpg",
-    pics: "https://i.pinimg.com/736x/a5/34/d1/a534d1d47cefbff4e8278618e8909e7e.jpg",
-    links: "https://i.pinimg.com/736x/75/ea/b6/75eab607a119fd5a449339dfdcd0ab57.jpg"
-  };
-
-  Object.keys(imageMap).forEach(key => {
-    const el = document.querySelector(".inner-circle." + key);
-    if (el) {
-      el.style.backgroundImage = `url('${imageMap[key]}')`;
-    }
-  });
-});
-</script>
-
-<script>
-/* Fix main home image path */
-const mainImg = document.querySelector(".main-card img");
-if (mainImg && mainImg.src.includes("..")) {
-  mainImg.src = "media/dev/gossip-girl/gossip-girl-serena-van-der-woodsen.png";
-}
-</script>
