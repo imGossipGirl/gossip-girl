@@ -114,12 +114,10 @@ button {
 
 <body>
 
-<!-- Header -->
 <div class="title">
   <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/6/64/Gossip_girl_titlecard.svg/1200px-Gossip_girl_titlecard.svg.png">
 </div>
 
-<!-- Nav -->
 <div class="right-section">
   <div class="circle" onclick="location.href='custom.html'"><div class="inner-circle custom"></div>custom</div>
   <div class="circle" onclick="location.href='index.html'"><div class="inner-circle home"></div>home</div>
@@ -128,93 +126,98 @@ button {
   <div class="circle" onclick="location.href='links.html'"><div class="inner-circle links"></div>links</div>
 </div>
 
-<!-- Admin Login -->
+<!-- LOGIN -->
 <div id="loginBox" class="card">
-  <h3>Admin Access</h3>
-  <input type="password" id="adminPass" placeholder="Password">
-  <button onclick="login()">Enter</button>
+  <h3>Admin Login</h3>
+  <input id="email" placeholder="Email">
+  <input id="password" type="password" placeholder="Password">
+  <button onclick="login()">Login</button>
 </div>
 
-<!-- Add Pic -->
+<!-- ADD PIC -->
 <div id="picForm" class="card" style="display:none;">
   <h3>Add New Pic</h3>
-  <input type="file" id="picFile" accept="image/*">
-  <input id="picUrl" placeholder="Or image URL">
+  <input id="picUrl" placeholder="Image URL (required)">
   <input id="picCaption" placeholder="Caption">
   <button onclick="addPic()">Post</button>
   <button onclick="logout()" style="background:#ccc;color:#333;">Logout</button>
 </div>
 
-<!-- Pics -->
+<!-- PICS -->
 <div id="pics"></div>
 
+<!-- FIREBASE -->
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+
 <script>
-const ADMIN_PASSWORD = "xoxo";
+firebase.initializeApp({
+  apiKey: "AIzaSyAG70-TmzFjnvgZhRkPR1DuDOrTComfwsc",
+  authDomain: "gossip-girl-4e394.firebaseapp.com",
+  projectId: "gossip-girl-4e394"
+});
+
+const auth = firebase.auth();
+const db = firebase.firestore();
+
+const loginBox = document.getElementById("loginBox");
+const picForm = document.getElementById("picForm");
 const picsDiv = document.getElementById("pics");
 
+/* AUTH */
 function login() {
-  if (adminPass.value === ADMIN_PASSWORD) {
-    localStorage.setItem("ggPicsAdmin", "true");
-    location.reload();
-  } else alert("Wrong password");
+  auth.signInWithEmailAndPassword(email.value, password.value)
+    .catch(err => alert(err.message));
 }
 
 function logout() {
-  localStorage.removeItem("ggPicsAdmin");
-  location.reload();
+  auth.signOut();
 }
 
-if (localStorage.getItem("ggPicsAdmin") === "true") {
-  loginBox.style.display = "none";
-  picForm.style.display = "block";
+auth.onAuthStateChanged(user => {
+  loginBox.style.display = user ? "none" : "block";
+  picForm.style.display = user ? "block" : "none";
+});
+
+/* ADD PIC */
+function addPic() {
+  if (!picUrl.value) return alert("Image URL required");
+
+  db.collection("pics").add({
+    image: picUrl.value,
+    caption: picCaption.value || "",
+    time: Date.now()
+  });
+
+  picUrl.value = "";
+  picCaption.value = "";
 }
 
-function loadPics() {
+/* LOAD PICS (PUBLIC) */
+db.collection("pics").orderBy("time", "desc")
+.onSnapshot(snapshot => {
   picsDiv.innerHTML = "";
-  const pics = JSON.parse(localStorage.getItem("ggPics")) || [];
-  pics.forEach((p, i) => {
+  snapshot.forEach(doc => {
+    const p = doc.data();
     picsDiv.innerHTML += `
       <div class="card">
         <img src="${p.image}">
-        <p>${p.caption || ""}</p>
-        ${localStorage.getItem("ggPicsAdmin")==="true" ? `<button class="delete-btn" onclick="del(${i})">Delete</button>` : ""}
+        <p>${p.caption}</p>
+        ${auth.currentUser ? `<button class="delete-btn" onclick="deletePic('${doc.id}')">Delete</button>` : ""}
       </div>
     `;
   });
+});
+
+/* DELETE */
+function deletePic(id) {
+  if (confirm("Delete this pic?")) {
+    db.collection("pics").doc(id).delete();
+  }
 }
-
-function addPic() {
-  const file = picFile.files[0];
-  const url = picUrl.value;
-  const caption = picCaption.value;
-
-  if (!file && !url) return alert("Add an image");
-
-  if (file) {
-    const r = new FileReader();
-    r.onload = e => savePic(e.target.result, caption);
-    r.readAsDataURL(file);
-  } else savePic(url, caption);
-}
-
-function savePic(image, caption) {
-  const pics = JSON.parse(localStorage.getItem("ggPics")) || [];
-  pics.unshift({ image, caption });
-  localStorage.setItem("ggPics", JSON.stringify(pics));
-  loadPics();
-  picFile.value = picUrl.value = picCaption.value = "";
-}
-
-function del(i) {
-  if (!confirm("Delete this pic?")) return;
-  const pics = JSON.parse(localStorage.getItem("ggPics"));
-  pics.splice(i,1);
-  localStorage.setItem("ggPics", JSON.stringify(pics));
-  loadPics();
-}
-
-loadPics();
 </script>
 
 </body>
 </html>
+
