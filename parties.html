@@ -6,18 +6,15 @@
 <title>Gossip Girl — Parties</title>
 
 <link rel="icon" href="https://upload.wikimedia.org/wikipedia/commons/thumb/6/64/Gossip_girl_titlecard.svg/1200px-Gossip_girl_titlecard.svg.png">
-
 <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
 
 <style>
-body, html {
+body {
   margin: 0;
-  padding: 0;
   font-family: 'Roboto', sans-serif;
-  background: url('https://primary.jwwb.nl/public/v/f/z/temp-drvbpvglefwdvbrbqnho/ur18xk/IMG_1169.jpg?enable-io=true&enable=upscale&crop=1600%2C795%2Cx0%2Cy0%2Csafe&width=980&height=487')
+  background: url('https://primary.jwwb.nl/public/v/f/z/temp-drvbpvglefwdvbrbqnho/ur18xk/IMG_1169.jpg')
     no-repeat center center fixed;
   background-size: cover;
-  color: #333;
 }
 
 .container {
@@ -34,9 +31,9 @@ body, html {
   margin-bottom: 30px;
 }
 
-.card h3 {
+h3 {
   font-family: 'Playfair Display', serif;
-  margin-bottom: 12px;
+  margin-bottom: 10px;
 }
 
 .party {
@@ -62,18 +59,14 @@ input, textarea {
   margin-bottom: 10px;
   border-radius: 6px;
   border: 1px solid #ccc;
-  font-family: inherit;
 }
 
-textarea {
-  resize: vertical;
-  min-height: 80px;
-}
+textarea { min-height: 80px; }
 
 button {
   width: 100%;
   padding: 10px;
-  background: #111;
+  background: black;
   color: white;
   border: none;
   border-radius: 6px;
@@ -81,42 +74,35 @@ button {
 }
 
 button.secondary {
-  background: transparent;
-  color: #555;
-  border: 1px solid #ccc;
+  background: #ccc;
+  color: #333;
   margin-top: 8px;
 }
 
 .delete-btn {
-  margin-top: 10px;
   background: #7a2c2c;
   font-size: 0.75rem;
 }
-
-.delete-btn:hover {
-  background: #5a1f1f;
-}
 </style>
 </head>
+
 <body>
 
 <div class="container">
 
-  <!-- Back -->
   <div class="card" style="text-align:center;">
-    <button class="secondary" onclick="window.location.href='index.html'">
-      ← Back to Home
-    </button>
+    <button class="secondary" onclick="location.href='index.html'">← Back to Home</button>
   </div>
 
-  <!-- Admin Login -->
-  <div id="adminLogin" class="card" style="display:none;">
-    <h3>Gossip Girl Access</h3>
-    <input type="password" id="adminPass" placeholder="Password">
-    <button onclick="loginAdmin()">Enter</button>
+  <!-- ADMIN LOGIN -->
+  <div id="loginBox" class="card">
+    <h3>Gossip Girl Login</h3>
+    <input id="email" placeholder="Email">
+    <input id="password" type="password" placeholder="Password">
+    <button onclick="login()">Login</button>
   </div>
 
-  <!-- Admin Form -->
+  <!-- ADMIN FORM -->
   <div id="adminForm" class="card" style="display:none;">
     <h3>Add New Party</h3>
 
@@ -124,15 +110,13 @@ button.secondary {
     <input id="partyLocation" placeholder="Location">
     <input id="partyTime" placeholder="Date / Time">
     <textarea id="partyDesc" placeholder="What happened?"></textarea>
-
-    <input type="file" id="partyImageFile" accept="image/*">
-    <input id="partyImageUrl" placeholder="Or image URL">
+    <input id="partyImage" placeholder="Image URL (optional)">
 
     <button onclick="addParty()">Post Party</button>
-    <button class="secondary" onclick="logoutAdmin()">Logout</button>
+    <button class="secondary" onclick="logout()">Logout</button>
   </div>
 
-  <!-- Party List -->
+  <!-- PARTY LIST -->
   <div class="card">
     <h3>Spotted: Upper East Side Parties</h3>
     <div id="partyList"></div>
@@ -140,109 +124,89 @@ button.secondary {
 
 </div>
 
+<!-- FIREBASE -->
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+
 <script>
-/* ===== CONFIG ===== */
-const ADMIN_PASSWORD = "xoxo";
+firebase.initializeApp({
+  apiKey: "AIzaSyAG70-TmzFjnvgZhRkPR1DuDOrTComfwsc",
+  authDomain: "gossip-girl-4e394.firebaseapp.com",
+  projectId: "gossip-girl-4e394"
+});
 
-/* ===== AUTH ===== */
-function loginAdmin() {
-  if (adminPass.value === ADMIN_PASSWORD) {
-    localStorage.setItem("ggAdmin", "true");
-    showAdmin();
-  } else {
-    alert("Wrong password.");
-  }
-}
+const auth = firebase.auth();
+const db = firebase.firestore();
 
-function logoutAdmin() {
-  localStorage.removeItem("ggAdmin");
-  location.reload();
-}
-
-function showAdmin() {
-  adminLogin.style.display = "none";
-  adminForm.style.display = "block";
-}
-
-/* ===== PARTIES ===== */
+const loginBox = document.getElementById("loginBox");
+const adminForm = document.getElementById("adminForm");
 const partyList = document.getElementById("partyList");
 
-function loadParties() {
-  const parties = JSON.parse(localStorage.getItem("ggParties")) || [];
-  partyList.innerHTML = "";
-
-  parties.forEach((p, index) => {
-    const div = document.createElement("div");
-    div.className = "party";
-
-    div.innerHTML = `
-      <p><strong>${p.title}</strong></p>
-      <p>${p.desc}</p>
-      ${p.image ? `<img src="${p.image}">` : ""}
-      <p class="meta">${p.location || ""} • ${p.time || ""}</p>
-      ${localStorage.getItem("ggAdmin") === "true"
-        ? `<button class="delete-btn" onclick="deleteParty(${index})">Delete</button>`
-        : ""}
-    `;
-
-    partyList.appendChild(div);
-  });
+/* AUTH */
+function login() {
+  auth.signInWithEmailAndPassword(email.value, password.value)
+    .catch(err => alert(err.message));
 }
 
+function logout() {
+  auth.signOut();
+}
+
+auth.onAuthStateChanged(user => {
+  loginBox.style.display = user ? "none" : "block";
+  adminForm.style.display = user ? "block" : "none";
+});
+
+/* ADD PARTY */
 function addParty() {
-  const title = partyTitle.value;
-  const location = partyLocation.value;
-  const time = partyTime.value;
-  const desc = partyDesc.value;
-  const file = partyImageFile.files[0];
-  const url = partyImageUrl.value;
-
-  if (!title || !desc) return alert("Missing details.");
-
-  if (file) {
-    const reader = new FileReader();
-    reader.onload = e => saveParty(title, location, time, desc, e.target.result);
-    reader.readAsDataURL(file);
-  } else {
-    saveParty(title, location, time, desc, url || null);
+  if (!partyTitle.value || !partyDesc.value) {
+    alert("Missing details");
+    return;
   }
-}
 
-function saveParty(title, location, time, desc, image) {
-  const parties = JSON.parse(localStorage.getItem("ggParties")) || [];
-
-  parties.unshift({ title, location, time, desc, image });
-  localStorage.setItem("ggParties", JSON.stringify(parties));
-
-  loadParties();
+  db.collection("parties").add({
+    title: partyTitle.value,
+    location: partyLocation.value,
+    time: partyTime.value,
+    desc: partyDesc.value,
+    image: partyImage.value || "",
+    created: Date.now()
+  });
 
   partyTitle.value = "";
   partyLocation.value = "";
   partyTime.value = "";
   partyDesc.value = "";
-  partyImageFile.value = "";
-  partyImageUrl.value = "";
+  partyImage.value = "";
 }
 
-function deleteParty(index) {
-  if (!confirm("Delete this party?")) return;
+/* LOAD PARTIES (PUBLIC) */
+db.collection("parties").orderBy("created", "desc")
+.onSnapshot(snapshot => {
+  partyList.innerHTML = "";
+  snapshot.forEach(doc => {
+    const p = doc.data();
+    partyList.innerHTML += `
+      <div class="party">
+        <strong>${p.title}</strong>
+        <p>${p.desc}</p>
+        ${p.image ? `<img src="${p.image}">` : ""}
+        <p class="meta">${p.location || ""} ${p.time || ""}</p>
+        ${auth.currentUser ? `<button class="delete-btn" onclick="deleteParty('${doc.id}')">Delete</button>` : ""}
+      </div>
+    `;
+  });
+});
 
-  const parties = JSON.parse(localStorage.getItem("ggParties")) || [];
-  parties.splice(index, 1);
-  localStorage.setItem("ggParties", JSON.stringify(parties));
-  loadParties();
-}
-
-/* ===== INIT ===== */
-window.onload = () => {
-  loadParties();
-  if (localStorage.getItem("ggAdmin") === "true") {
-    showAdmin();
-  } else {
-    adminLogin.style.display = "block";
+/* DELETE */
+function deleteParty(id) {
+  if (confirm("Delete this party?")) {
+    db.collection("parties").doc(id).delete();
   }
-};
+}
 </script>
 
 </body>
 </html>
+
