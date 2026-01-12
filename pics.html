@@ -5,126 +5,32 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Gossip Girl – Pics</title>
 
-<link rel="icon" href="https://upload.wikimedia.org/wikipedia/commons/thumb/6/64/Gossip_girl_titlecard.svg/1200px-Gossip_girl_titlecard.svg.png">
 <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
 
 <style>
-body, html {
+body {
   margin: 0;
-  padding: 0;
-  font-family: 'Roboto', sans-serif;
-  background: url('https://primary.jwwb.nl/public/v/f/z/temp-drvbpvglefwdvbrbqnho/ur18xk/IMG_1169.jpg') no-repeat center center fixed;
+  font-family: Roboto, sans-serif;
+  background: url("https://primary.jwwb.nl/public/v/f/z/temp-drvbpvglefwdvbrbqnho/ur18xk/IMG_1169.jpg") no-repeat center center fixed;
   background-size: cover;
 }
 
-/* Header */
-.title {
-  display: flex;
-  justify-content: center;
-  margin-top: 20px;
-}
-.title img { width: 300px; }
-
-/* Sidebar */
-.right-section {
-  position: fixed;
-  right: 20px;
-  top: 140px;
-  display: flex;
-  flex-direction: column;
-  gap: 18px;
-}
-
-.circle {
-  width: 60px;
-  height: 60px;
-  border-radius: 50%;
-  background: rgba(185,179,130,.85);
-  color: white;
-  font-size: .75rem;
-  display: flex;
-  justify-content: center;
-  align-items: flex-end;
-  padding-bottom: 5px;
-  cursor: pointer;
-  position: relative;
-}
-
-.inner-circle {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  background-size: cover;
-  background-position: center;
-  position: absolute;
-  top: 6px;
-}
-
-.inner-circle.custom { background-image: url('https://t3.ftcdn.net/jpg/03/58/90/78/360_F_358907879_Vdu96gF4XVhjCZxN2kCG0THTsSQi8IhT.jpg'); }
-.inner-circle.home { background-image: url('https://upload.wikimedia.org/wikipedia/commons/3/33/Serena_van_der_Woodsen.jpg'); }
-.inner-circle.posts { background-image: url('https://upload.wikimedia.org/wikipedia/commons/8/85/Chuck_Bass_Gossip_Girl.jpg'); }
-.inner-circle.pics { background-image: url('https://upload.wikimedia.org/wikipedia/commons/0/01/Blair_Waldorf.png'); }
-.inner-circle.links { background-image: url('https://upload.wikimedia.org/wikipedia/commons/d/d4/Ivy_Dickens.png'); }
-
-/* Cards */
 .card {
   max-width: 600px;
   margin: 30px auto;
   background: rgba(255,255,255,.95);
   padding: 20px;
   border-radius: 14px;
-  box-shadow: 0 10px 25px rgba(0,0,0,.4);
 }
 
 .card img {
   width: 100%;
   border-radius: 10px;
-  margin-bottom: 10px;
 }
-
-.card p {
-  font-family: 'Playfair Display', serif;
-  text-align: center;
-  margin: 0;
-}
-
-/* Admin */
-input, button {
-  width: 100%;
-  padding: 10px;
-  margin-bottom: 10px;
-  border-radius: 6px;
-  border: 1px solid #ccc;
-}
-
-button {
-  background: black;
-  color: white;
-  border: none;
-  cursor: pointer;
-}
-
-.delete-btn {
-  background: #7a2c2c;
-  font-size: .75rem;
-}
-.delete-btn:hover { background:#5a1f1f; }
 </style>
 </head>
 
 <body>
-
-<div class="title">
-  <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/6/64/Gossip_girl_titlecard.svg/1200px-Gossip_girl_titlecard.svg.png">
-</div>
-
-<div class="right-section">
-  <div class="circle" onclick="location.href='custom.html'"><div class="inner-circle custom"></div>custom</div>
-  <div class="circle" onclick="location.href='index.html'"><div class="inner-circle home"></div>home</div>
-  <div class="circle" onclick="location.href='posts.html'"><div class="inner-circle posts"></div>posts</div>
-  <div class="circle"><div class="inner-circle pics"></div>pics</div>
-  <div class="circle" onclick="location.href='links.html'"><div class="inner-circle links"></div>links</div>
-</div>
 
 <!-- LOGIN -->
 <div id="loginBox" class="card">
@@ -136,17 +42,14 @@ button {
 
 <!-- ADD PIC -->
 <div id="picForm" class="card" style="display:none;">
-  <h3>Add New Pic</h3>
-  <input id="picUrl" placeholder="Image URL (required)">
+  <input id="picUrl" placeholder="Image URL">
   <input id="picCaption" placeholder="Caption">
   <button onclick="addPic()">Post</button>
-  <button onclick="logout()" style="background:#ccc;color:#333;">Logout</button>
+  <button onclick="logout()">Logout</button>
 </div>
 
-<!-- PICS -->
 <div id="pics"></div>
 
-<!-- FIREBASE -->
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
@@ -161,11 +64,6 @@ firebase.initializeApp({
 const auth = firebase.auth();
 const db = firebase.firestore();
 
-const loginBox = document.getElementById("loginBox");
-const picForm = document.getElementById("picForm");
-const picsDiv = document.getElementById("pics");
-
-/* AUTH */
 function login() {
   auth.signInWithEmailAndPassword(email.value, password.value)
     .catch(err => alert(err.message));
@@ -180,44 +78,32 @@ auth.onAuthStateChanged(user => {
   picForm.style.display = user ? "block" : "none";
 });
 
-/* ADD PIC */
 function addPic() {
-  if (!picUrl.value) return alert("Image URL required");
-
   db.collection("pics").add({
     image: picUrl.value,
-    caption: picCaption.value || "",
+    caption: picCaption.value,
     time: Date.now()
   });
-
-  picUrl.value = "";
-  picCaption.value = "";
+  picUrl.value = picCaption.value = "";
 }
 
-/* LOAD PICS (PUBLIC) */
-db.collection("pics").orderBy("time", "desc")
+db.collection("pics").orderBy("time","desc")
 .onSnapshot(snapshot => {
-  picsDiv.innerHTML = "";
+  pics.innerHTML = "";
   snapshot.forEach(doc => {
     const p = doc.data();
-    picsDiv.innerHTML += `
+    pics.innerHTML += `
       <div class="card">
         <img src="${p.image}">
         <p>${p.caption}</p>
-        ${auth.currentUser ? `<button class="delete-btn" onclick="deletePic('${doc.id}')">Delete</button>` : ""}
+        ${auth.currentUser ? `<button onclick="db.collection('pics').doc('${doc.id}').delete()">Delete</button>` : ""}
       </div>
     `;
   });
 });
-
-/* DELETE */
-function deletePic(id) {
-  if (confirm("Delete this pic?")) {
-    db.collection("pics").doc(id).delete();
-  }
-}
 </script>
 
 </body>
 </html>
+
 
