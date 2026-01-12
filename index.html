@@ -1,176 +1,405 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Gossip Girl</title>
 
-<link rel="icon" href="https://upload.wikimedia.org/wikipedia/commons/thumb/6/64/Gossip_girl_titlecard.svg/1200px-Gossip_girl_titlecard.svg.png">
-<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+<link rel="icon" type="image/png" sizes="32x32" href="https://upload.wikimedia.org/wikipedia/commons/thumb/6/64/Gossip_girl_titlecard.svg/1200px-Gossip_girl_titlecard.svg.png">
+
+<script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
 
 <style>
+@font-face {
+  font-family: 'FontNeue Helvetica 33 Thin Extended';
+  src: url('../media/dev/gossip-girl/Helvetica%20Neue%20LT%20Std%2033%20Thin%20Extended.otf') format('opentype');
+  font-weight: normal;
+  font-style: normal;
+}
+
 body, html {
   margin: 0;
   padding: 0;
-  font-family: 'Roboto', sans-serif;
-  background: url('https://primary.jwwb.nl/public/v/f/z/temp-drvbpvglefwdvbrbqnho/ur18xk/IMG_1169.jpg') no-repeat center center fixed;
+  overflow-x: hidden;
+  height: 100%;
+}
+
+body {
+  background: url('https://primary.jwwb.nl/public/v/f/z/temp-drvbpvglefwdvbrbqnho/ur18xk/IMG_1169.jpg?enable-io=true&enable=upscale&crop=1600%2C795%2Cx0%2Cy0%2Csafe&width=980&height=487') no-repeat center center fixed;
   background-size: cover;
-}
-
-/* Header */
-.title {
+  font-family: 'FontNeue Helvetica 33 Thin Extended', sans-serif;
+  font-weight: 100;
   display: flex;
-  justify-content: center;
-  margin-top: 20px;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  text-align: center;
 }
-.title img { width: 350px; }
 
-/* Layout */
 .container {
   display: flex;
+  flex-direction: row;
   justify-content: center;
+  align-items: flex-start;
   gap: 40px;
-  margin-top: 20px;
   flex-wrap: wrap;
+  width: 100%;
+  padding: 0 20px;
+  margin-top: 20px;
 }
 
-/* Left text */
-.left-section {
-  text-align: left;
+.title {
+  margin-top: 20px;
+  margin-bottom: -40px;
+  line-height: 1;
 }
-.left-section h3 { margin-bottom: 0; }
-.left-section p { margin-top: 0; color: #777; }
+.title img {
+  max-width: 697px;
+  width: 100%;
+  height: auto;
+}
 
-/* Card */
+/* Left Section */
+.left-section { text-align: left; }
+.left-section h3 { margin-bottom: 0; font-size: 1.1rem; }
+.left-section p { margin-top: 0; color: #7A7A7D; font-size: 0.9rem; }
+.left-section h3:nth-of-type(1) { color: #4097C7; }
+.left-section h3:nth-of-type(2) { color: #CE8062; }
+.left-section h3:nth-of-type(3) { color: #D1D4AA; }
+.left-section h3:nth-of-type(4) { color: #CF7B9A; }
+.left-section h3:nth-of-type(5) { color: #A1C357; }
+u { color: #7bbacc; cursor: pointer; }
+.left-section h3:nth-of-type(3) + p u { display: inline-block; padding-left: 17px; }
+
+/* Main Card */
 .main-card {
   background: white;
+  color: #3D4046;
   padding: 20px;
-  border-radius: 12px;
-  width: 320px;
-  box-shadow: 0 10px 25px rgba(0,0,0,.4);
-}
-.main-card img {
-  width: 100%;
   border-radius: 10px;
-  margin: 10px 0;
+  text-align: center;
+  width: 316px;
+  min-height: 404px;
+  font-weight: normal;
+  font-family: 'FontNeue Helvetica 33 Thin Extended', sans-serif;
+  text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.4);
+  position: relative;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.3);
 }
+
+.main-card img {
+  width: 232px;
+  height: 272px;
+  object-fit: cover;
+  margin-top: 10px;
+  border-radius: 6px;
+}
+
 .description {
-  font-size: .9rem;
+  width: 280px;
+  margin: 10px auto;
+  text-align: justify;
+  color: #3D4046;
+  font-size: 0.9rem;
 }
+
 .signature {
   text-align: right;
   color: #7bbacc;
-  font-size: .8rem;
+  font-size: 0.8rem;
+  margin-top: 5px;
 }
 
-/* Admin editor */
-#homeEditor {
-  display: none;
-  margin-top: 15px;
+/* Right circles */
+.right-section {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  height: 420px;
 }
-#homeEditor input,
-#homeEditor textarea {
+
+.circle {
+  width: 65px;
+  height: 64px;
+  background: #B9B382;
+  border-radius: 50%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  padding-bottom: 5px;
+  position: relative;
+  color: #544F31;
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+.circle:hover { transform: scale(1.05); }
+
+.inner-circle {
+  width: 44px;
+  height: 45px;
+  background-size: cover;
+  background-position: center;
+  border-radius: 50%;
+  position: absolute;
+  top: 1px;
+}
+
+/* Use these pinned URLs so they always show */
+.inner-circle.custom { background-image: url('https://i.pinimg.com/736x/cf/84/3e/cf843e8585e57a907af82bb5a86fae48.jpg'); }
+.inner-circle.home   { background-image: url('https://i.pinimg.com/736x/24/24/95/2424950fe4aa72741f9fbb15da01db8a.jpg'); }
+.inner-circle.posts  { background-image: url('https://i.pinimg.com/736x/c3/4f/8f/c34f8ff1b25bcc61a84a116b18d6da42.jpg'); }
+.inner-circle.pics   { background-image: url('https://i.pinimg.com/736x/a5/34/d1/a534d1d47cefbff4e8278618e8909e7e.jpg'); }
+.inner-circle.links  { background-image: url('https://i.pinimg.com/736x/75/ea/b6/75eab607a119fd5a449339dfdcd0ab57.jpg'); }
+
+/* Admin editor UI (hidden unless logged in) */
+#adminPanel {
+  display: none;
+  margin-top: 14px;
+  padding: 12px;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  text-shadow: none;
+  font-family: Arial, sans-serif;
+}
+#adminPanel h4 { margin: 0 0 10px; font-family: Arial, sans-serif; }
+#adminPanel input, #adminPanel textarea {
   width: 100%;
   padding: 8px;
   margin-bottom: 8px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  box-sizing: border-box;
 }
-
-/* Buttons */
-button {
-  padding: 8px;
+#adminPanel button {
   width: 100%;
-  background: black;
-  color: white;
+  padding: 10px;
   border: none;
   border-radius: 6px;
+  background: #111;
+  color: white;
   cursor: pointer;
+}
+#adminPanel button.secondary {
+  margin-top: 8px;
+  background: transparent;
+  color: #555;
+  border: 1px solid #ccc;
+}
+
+/* Login box inside card */
+#loginBox {
+  display: none;
+  margin-top: 14px;
+  padding: 12px;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  text-shadow: none;
+  font-family: Arial, sans-serif;
+}
+#loginBox input {
+  width: 100%;
+  padding: 8px;
+  margin-bottom: 8px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  box-sizing: border-box;
+}
+#loginBox button {
+  width: 100%;
+  padding: 10px;
+  border: none;
+  border-radius: 6px;
+  background: #111;
+  color: white;
+  cursor: pointer;
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+  .container {
+    flex-direction: column;
+    gap: 20px;
+    align-items: center;
+    padding-bottom: 60px;
+  }
+  .main-card { order: 1; width: 85%; }
+  .right-section { order: 2; flex-direction: row; height: auto; flex-wrap: wrap; justify-content: center; }
+  .left-section { order: 3; text-align: center; }
+  .main-card img { width: 100%; max-width: 232px; height: auto; }
 }
 </style>
 </head>
 
 <body>
 
-<div class="title">
-  <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/6/64/Gossip_girl_titlecard.svg/1200px-Gossip_girl_titlecard.svg.png">
-</div>
+<h1 class="title">
+  <img src="../media/dev/gossip-girl/thumbnails_gossip-girl-font.png" alt="Gossip Girl">
+</h1>
 
 <div class="container">
 
   <div class="left-section">
     <h3>welcome</h3>
-    <p>to Gossip Girl!<br>THE Site ABOUT the<br>Upper East Side.</p>
+    <p>to Gossip Girl!<br>THE Site ABOUT the<br>Upper East Side,<br>FOR the Upper East<br>Side and BY the<br>Upper East Side!</p>
+
+    <h3>gossip</h3>
+    <p>The latest "411"<br>on all the in people.</p>
 
     <h3>pics</h3>
-    <p><u onclick="location.href='pics.html'">CURRENT PHOTO</u></p>
+    <p>
+      See what the fashionistas<br>on the UES are wearing.<br>
+      <u onclick="window.location.href='pics.html'">CURRENT PHOTO</u><br>
+      <u onclick="window.location.href='pics.html'">GALLERY</u>
+    </p>
 
     <h3>parties</h3>
-    <p><u onclick="location.href='parties.html'">CLICK HERE</u></p>
+    <p>
+      Your invitation was<br>probably lost in the mail!<br>
+      <u onclick="window.location.href='parties.html'">CLICK HERE</u> to see<br>what you missed.
+    </p>
+
+    <h3>links</h3>
   </div>
 
   <div class="main-card">
-    <p class="spotted"><strong>Spotted:</strong></p>
+    <p class="spotted"><strong>Spotted: Serena van der Woodsen</strong></p>
 
-    <img src="" alt="Spotted">
+    <!-- default image so it never breaks -->
+    <img id="homeImg" src="media/dev/gossip-girl/gossip-girl-serena-van-der-woodsen.png" alt="Spotted">
 
-    <p class="description"></p>
+    <p class="description" id="homeCaption">
+      Gossip Girl here, your one and only source into the scandalous lives of Manhattan's elite.
+    </p>
     <p class="signature">xo xo GOSSIP GIRL</p>
 
-    <!-- ADMIN EDITOR -->
-    <div id="homeEditor">
-      <input id="editName" placeholder="Spotted name">
-      <input id="editImage" placeholder="Image URL">
-      <textarea id="editCaption" placeholder="Caption"></textarea>
-      <button onclick="saveHomePost()">Save</button>
+    <!-- Login (only shows if NOT logged in) -->
+    <div id="loginBox">
+      <input id="ggEmail" placeholder="Gossip Girl email">
+      <input id="ggPass" type="password" placeholder="Password">
+      <button onclick="ggLogin()">Login</button>
     </div>
+
+    <!-- Admin panel (only shows if logged in) -->
+    <div id="adminPanel">
+      <h4>Edit Home Post</h4>
+      <input id="editName" placeholder="Spotted name">
+      <input id="editImage" placeholder="Image URL (https://...)">
+      <textarea id="editCaption" rows="3" placeholder="Caption"></textarea>
+      <button onclick="saveHome()">Save</button>
+      <button class="secondary" onclick="ggLogout()">Logout</button>
+      <div id="status" style="font-size:.8rem;color:#777;margin-top:8px;"></div>
+    </div>
+  </div>
+
+  <div class="right-section">
+    <div class="circle" onclick="window.location.href='custom.html'"><div class="inner-circle custom"></div>custom</div>
+    <div class="circle" onclick="window.location.href='index.html'"><div class="inner-circle home"></div>home</div>
+    <div class="circle" onclick="window.location.href='posts.html'"><div class="inner-circle posts"></div>posts</div>
+    <div class="circle" onclick="window.location.href='pics.html'"><div class="inner-circle pics"></div>pics</div>
+    <div class="circle" onclick="window.location.href='links.html'"><div class="inner-circle links"></div>links</div>
   </div>
 
 </div>
 
-<!-- FIREBASE -->
+<!-- Firebase -->
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
 
 <script>
+/* ===== Firebase init ===== */
 firebase.initializeApp({
   apiKey: "AIzaSyAG70-TmzFjnvgZhRkPR1DuDOrTComfwsc",
   authDomain: "gossip-girl-4e394.firebaseapp.com",
   projectId: "gossip-girl-4e394"
 });
-
 const auth = firebase.auth();
 const db = firebase.firestore();
 
-const spottedText = document.querySelector(".spotted strong");
-const postImage   = document.querySelector(".main-card img");
-const postCaption = document.querySelector(".description");
-const editor      = document.getElementById("homeEditor");
+/* ===== Elements ===== */
+const spottedEl = document.querySelector(".spotted strong");
+const imgEl = document.getElementById("homeImg");
+const capEl = document.getElementById("homeCaption");
 
-/* LOAD HOME POST (PUBLIC) */
+const loginBox = document.getElementById("loginBox");
+const adminPanel = document.getElementById("adminPanel");
+
+const editName = document.getElementById("editName");
+const editImage = document.getElementById("editImage");
+const editCaption = document.getElementById("editCaption");
+const statusEl = document.getElementById("status");
+
+/* ===== Default fallback (so page never looks broken) ===== */
+const FALLBACK = {
+  name: "Serena van der Woodsen",
+  image: "media/dev/gossip-girl/gossip-girl-serena-van-der-woodsen.png",
+  caption: "Gossip Girl here, your one and only source into the scandalous lives of Manhattan's elite."
+};
+
+/* ===== Public: live load from Firestore ===== */
 db.collection("home").doc("main").onSnapshot(doc => {
-  if (!doc.exists) return;
-  const d = doc.data();
-  spottedText.textContent = "Spotted: " + d.name;
-  postImage.src = d.image;
-  postCaption.textContent = d.caption;
+  const d = doc.exists ? doc.data() : FALLBACK;
+
+  const name = d.name || FALLBACK.name;
+  const image = d.image || FALLBACK.image;
+  const caption = d.caption || FALLBACK.caption;
+
+  spottedEl.textContent = "Spotted: " + name;
+  imgEl.src = image;
+  capEl.textContent = caption;
+
+  // Prefill editor (if logged in)
+  editName.value = name;
+  editImage.value = image;
+  editCaption.value = caption;
+}, err => {
+  // If rules block reads, you'll see it here
+  console.log("Firestore read error:", err);
 });
 
-/* SHOW EDITOR ONLY IF LOGGED IN */
+/* ===== Auth UI ===== */
 auth.onAuthStateChanged(user => {
-  editor.style.display = user ? "block" : "none";
+  if (user) {
+    loginBox.style.display = "none";
+    adminPanel.style.display = "block";
+    if (statusEl) statusEl.textContent = "Logged in as: " + (user.email || "admin");
+  } else {
+    adminPanel.style.display = "none";
+    loginBox.style.display = "block";
+  }
 });
 
-/* SAVE HOME POST */
-function saveHomePost() {
+/* ===== Login/Logout ===== */
+function ggLogin() {
+  const email = document.getElementById("ggEmail").value.trim();
+  const pass = document.getElementById("ggPass").value;
+  if (!email || !pass) return alert("Enter email + password");
+
+  auth.signInWithEmailAndPassword(email, pass)
+    .catch(e => alert(e.message));
+}
+function ggLogout() {
+  auth.signOut();
+}
+
+/* ===== Save home post (writes to Firestore) ===== */
+function saveHome() {
+  const name = editName.value.trim() || FALLBACK.name;
+  const image = editImage.value.trim() || FALLBACK.image;
+  const caption = editCaption.value.trim() || FALLBACK.caption;
+
+  // IMPORTANT: image must be public https or your uploaded file path
   db.collection("home").doc("main").set({
-    name: document.getElementById("editName").value,
-    image: document.getElementById("editImage").value,
-    caption: document.getElementById("editCaption").value,
-    time: Date.now()
-  }).then(() => alert("Updated 💋"));
+    name, image, caption,
+    time: Date.now(),
+    updatedBy: auth.currentUser ? auth.currentUser.email : ""
+  }).then(() => alert("Updated 💋"))
+    .catch(e => alert(e.message));
 }
 </script>
 
 </body>
 </html>
+
 
