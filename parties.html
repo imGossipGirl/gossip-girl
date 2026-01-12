@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gossip Girl — Parties</title>
+
+<link rel="icon" href="https://upload.wikimedia.org/wikipedia/commons/thumb/6/64/Gossip_girl_titlecard.svg/1200px-Gossip_girl_titlecard.svg.png">
+
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+
+<style>
+body, html {
+  margin: 0;
+  padding: 0;
+  font-family: 'Roboto', sans-serif;
+  background: url('https://primary.jwwb.nl/public/v/f/z/temp-drvbpvglefwdvbrbqnho/ur18xk/IMG_1169.jpg?enable-io=true&enable=upscale&crop=1600%2C795%2Cx0%2Cy0%2Csafe&width=980&height=487')
+    no-repeat center center fixed;
+  background-size: cover;
+  color: #333;
+}
+
+.container {
+  max-width: 650px;
+  margin: 40px auto;
+  padding: 20px;
+}
+
+.card {
+  background: rgba(255,255,255,0.96);
+  border-radius: 14px;
+  padding: 20px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.4);
+  margin-bottom: 30px;
+}
+
+.card h3 {
+  font-family: 'Playfair Display', serif;
+  margin-bottom: 12px;
+}
+
+.party {
+  border-top: 1px solid #ddd;
+  padding-top: 15px;
+  margin-top: 15px;
+}
+
+.party img {
+  width: 100%;
+  border-radius: 10px;
+  margin: 10px 0;
+}
+
+.meta {
+  font-size: 0.75rem;
+  color: #777;
+}
+
+input, textarea {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 10px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  font-family: inherit;
+}
+
+textarea {
+  resize: vertical;
+  min-height: 80px;
+}
+
+button {
+  width: 100%;
+  padding: 10px;
+  background: #111;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+button.secondary {
+  background: transparent;
+  color: #555;
+  border: 1px solid #ccc;
+  margin-top: 8px;
+}
+
+.delete-btn {
+  margin-top: 10px;
+  background: #7a2c2c;
+  font-size: 0.75rem;
+}
+
+.delete-btn:hover {
+  background: #5a1f1f;
+}
+</style>
+</head>
+<body>
+
+<div class="container">
+
+  <!-- Back -->
+  <div class="card" style="text-align:center;">
+    <button class="secondary" onclick="window.location.href='index.html'">
+      ← Back to Home
+    </button>
+  </div>
+
+  <!-- Admin Login -->
+  <div id="adminLogin" class="card" style="display:none;">
+    <h3>Gossip Girl Access</h3>
+    <input type="password" id="adminPass" placeholder="Password">
+    <button onclick="loginAdmin()">Enter</button>
+  </div>
+
+  <!-- Admin Form -->
+  <div id="adminForm" class="card" style="display:none;">
+    <h3>Add New Party</h3>
+
+    <input id="partyTitle" placeholder="Party name">
+    <input id="partyLocation" placeholder="Location">
+    <input id="partyTime" placeholder="Date / Time">
+    <textarea id="partyDesc" placeholder="What happened?"></textarea>
+
+    <input type="file" id="partyImageFile" accept="image/*">
+    <input id="partyImageUrl" placeholder="Or image URL">
+
+    <button onclick="addParty()">Post Party</button>
+    <button class="secondary" onclick="logoutAdmin()">Logout</button>
+  </div>
+
+  <!-- Party List -->
+  <div class="card">
+    <h3>Spotted: Upper East Side Parties</h3>
+    <div id="partyList"></div>
+  </div>
+
+</div>
+
+<script>
+/* ===== CONFIG ===== */
+const ADMIN_PASSWORD = "xoxo";
+
+/* ===== AUTH ===== */
+function loginAdmin() {
+  if (adminPass.value === ADMIN_PASSWORD) {
+    localStorage.setItem("ggAdmin", "true");
+    showAdmin();
+  } else {
+    alert("Wrong password.");
+  }
+}
+
+function logoutAdmin() {
+  localStorage.removeItem("ggAdmin");
+  location.reload();
+}
+
+function showAdmin() {
+  adminLogin.style.display = "none";
+  adminForm.style.display = "block";
+}
+
+/* ===== PARTIES ===== */
+const partyList = document.getElementById("partyList");
+
+function loadParties() {
+  const parties = JSON.parse(localStorage.getItem("ggParties")) || [];
+  partyList.innerHTML = "";
+
+  parties.forEach((p, index) => {
+    const div = document.createElement("div");
+    div.className = "party";
+
+    div.innerHTML = `
+      <p><strong>${p.title}</strong></p>
+      <p>${p.desc}</p>
+      ${p.image ? `<img src="${p.image}">` : ""}
+      <p class="meta">${p.location || ""} • ${p.time || ""}</p>
+      ${localStorage.getItem("ggAdmin") === "true"
+        ? `<button class="delete-btn" onclick="deleteParty(${index})">Delete</button>`
+        : ""}
+    `;
+
+    partyList.appendChild(div);
+  });
+}
+
+function addParty() {
+  const title = partyTitle.value;
+  const location = partyLocation.value;
+  const time = partyTime.value;
+  const desc = partyDesc.value;
+  const file = partyImageFile.files[0];
+  const url = partyImageUrl.value;
+
+  if (!title || !desc) return alert("Missing details.");
+
+  if (file) {
+    const reader = new FileReader();
+    reader.onload = e => saveParty(title, location, time, desc, e.target.result);
+    reader.readAsDataURL(file);
+  } else {
+    saveParty(title, location, time, desc, url || null);
+  }
+}
+
+function saveParty(title, location, time, desc, image) {
+  const parties = JSON.parse(localStorage.getItem("ggParties")) || [];
+
+  parties.unshift({ title, location, time, desc, image });
+  localStorage.setItem("ggParties", JSON.stringify(parties));
+
+  loadParties();
+
+  partyTitle.value = "";
+  partyLocation.value = "";
+  partyTime.value = "";
+  partyDesc.value = "";
+  partyImageFile.value = "";
+  partyImageUrl.value = "";
+}
+
+function deleteParty(index) {
+  if (!confirm("Delete this party?")) return;
+
+  const parties = JSON.parse(localStorage.getItem("ggParties")) || [];
+  parties.splice(index, 1);
+  localStorage.setItem("ggParties", JSON.stringify(parties));
+  loadParties();
+}
+
+/* ===== INIT ===== */
+window.onload = () => {
+  loadParties();
+  if (localStorage.getItem("ggAdmin") === "true") {
+    showAdmin();
+  } else {
+    adminLogin.style.display = "block";
+  }
+};
+</script>
+
+</body>
+</html>
