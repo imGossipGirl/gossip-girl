@@ -3,77 +3,32 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Gossip Girl – Pics</title>
-<link rel="icon" href="https://upload.wikimedia.org/wikipedia/commons/thumb/6/64/Gossip_girl_titlecard.svg/1200px-Gossip_girl_titlecard.svg.png">
+<title>Gossip Girl – Posts</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
 
 <style>
-body, html {
+body {
   margin: 0;
-  padding: 0;
   font-family: 'Roboto', sans-serif;
   background: url('https://primary.jwwb.nl/public/v/f/z/temp-drvbpvglefwdvbrbqnho/ur18xk/IMG_1169.jpg') no-repeat center center fixed;
   background-size: cover;
 }
 
-/* Header */
 .title {
   display: flex;
   justify-content: center;
-  margin-top: 20px;
+  margin: 20px 0;
 }
 .title img { width: 300px; }
 
-/* Sidebar */
-.right-section {
-  position: fixed;
-  right: 20px;
-  top: 140px;
-  display: flex;
-  flex-direction: column;
-  gap: 18px;
-}
-
-.circle {
-  width: 60px;
-  height: 60px;
-  border-radius: 50%;
-  background: rgba(185,179,130,.85);
-  color: white;
-  font-size: .75rem;
-  display: flex;
-  justify-content: center;
-  align-items: flex-end;
-  padding-bottom: 5px;
-  cursor: pointer;
-  position: relative;
-}
-
-.inner-circle {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  background-size: cover;
-  background-position: center;
-  position: absolute;
-  top: 6px;
-}
-
-.inner-circle.custom { background-image: url('https://t3.ftcdn.net/jpg/03/58/90/78/360_F_358907879_Vdu96gF4XVhjCZxN2kCG0THTsSQi8IhT.jpg'); }
-.inner-circle.home { background-image: url('https://upload.wikimedia.org/wikipedia/commons/3/33/Serena_van_der_Woodsen.jpg'); }
-.inner-circle.posts { background-image: url('https://upload.wikimedia.org/wikipedia/commons/8/85/Chuck_Bass_Gossip_Girl.jpg'); }
-.inner-circle.pics { background-image: url('https://upload.wikimedia.org/wikipedia/commons/0/01/Blair_Waldorf.png'); }
-.inner-circle.links { background-image: url('https://upload.wikimedia.org/wikipedia/commons/d/d4/Ivy_Dickens.png'); }
-
-/* Admin / Posts */
 .post-card {
   max-width: 420px;
   margin: 30px auto;
-  background: rgba(255,255,255,.95);
+  background: rgba(255,255,255,0.95);
   padding: 20px;
   border-radius: 14px;
-  box-shadow: 0 10px 25px rgba(0,0,0,.4);
+  box-shadow: 0 10px 25px rgba(0,0,0,0.4);
 }
 
 .post-card img {
@@ -98,6 +53,8 @@ input, textarea {
   border: 1px solid #ccc;
 }
 
+textarea { resize: vertical; min-height: 90px; }
+
 button {
   width: 100%;
   padding: 10px;
@@ -108,219 +65,53 @@ button {
   cursor: pointer;
 }
 
-.delete-btn {
-  margin-top: 10px;
-  background: #7a2c2c;
-  font-size: .75rem;
+button.secondary {
+  background: #ccc;
+  color: #333;
+  margin-top: 8px;
 }
 
-.delete-btn:hover { background: #5a1f1f; }
+.delete-btn {
+  background: #7a2c2c;
+  margin-top: 10px;
+  font-size: 0.75rem;
+}
 </style>
 </head>
 
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
-
-<script>
-/* ===== FIREBASE ===== */
-firebase.initializeApp({
-  apiKey: "AIzaSyAG70-TmzFjnvgZhRkPR1DuDOrTComfwsc",
-  authDomain: "gossip-girl-4e394.firebaseapp.com",
-  projectId: "gossip-girl-4e394"
-});
-
-const auth = firebase.auth();
-const db = firebase.firestore();
-
-/* ===== ELEMENTS ===== */
-const loginBox = document.getElementById("loginBox");
-const postForm = document.getElementById("postForm");
-const postsDiv = document.getElementById("posts");
-
-/* ===== LOGIN ===== */
-function login() {
-  <div id="loginBox" class="post-card">
-  <h3>Admin Login</h3>
-  <input id="email" placeholder="Email">
-  <input id="password" type="password" placeholder="Password">
-  <button onclick="login()">Login</button>
-</div>
-
-function logout() {
-  auth.signOut();
-}
-
-/* ===== AUTH STATE ===== */
-auth.onAuthStateChanged(user => {
-  loginBox.style.display = user ? "none" : "block";
-  postForm.style.display = user ? "block" : "none";
-});
-
-/* ===== ADD POST ===== */
-function addPost() {
-  const title = postTitle.value;
-  const body = postBody.value;
-  const image = postImageUrl.value;
-
-  if (!title || !body) return alert("Fill everything.");
-
-  db.collection("posts").add({
-    title,
-    body,
-    image: image || "",
-    time: Date.now()
-  });
-
-  postTitle.value = "";
-  postBody.value = "";
-  postImageUrl.value = "";
-}
-
-/* ===== LOAD POSTS (PUBLIC) ===== */
-db.collection("posts").orderBy("time", "desc")
-.onSnapshot(snapshot => {
-  postsDiv.innerHTML = "";
-
-  snapshot.forEach(doc => {
-    const p = doc.data();
-    postsDiv.innerHTML += `
-      <div class="post-card">
-        <h3>${p.title}</h3>
-        ${p.image ? `<img src="${p.image}">` : ""}
-        <p>${p.body}</p>
-        ${auth.currentUser ? `<button class="delete-btn" onclick="deletePost('${doc.id}')">Delete</button>` : ""}
-      </div>
-    `;
-  });
-});
-
-/* ===== DELETE ===== */
-function deletePost(id) {
-  if (confirm("Delete this post?")) {
-    db.collection("posts").doc(id).delete();
-  }
-}
-</script>
-
-  
 <body>
 
 <div class="title">
   <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/6/64/Gossip_girl_titlecard.svg/1200px-Gossip_girl_titlecard.svg.png">
 </div>
 
-<div class="right-section">
-  <div class="circle" onclick="location.href='custom.html'"><div class="inner-circle custom"></div>custom</div>
-  <div class="circle" onclick="location.href='index.html'"><div class="inner-circle home"></div>home</div>
-  <div class="circle" onclick="location.href='posts.html'"><div class="inner-circle posts"></div>posts</div>
-  <div class="circle"><div class="inner-circle pics"></div>pics</div>
-  <div class="circle" onclick="location.href='links.html'"><div class="inner-circle links"></div>links</div>
-</div>
-
+<!-- LOGIN -->
 <div id="loginBox" class="post-card">
-  <h3>Admin Access</h3>
+  <h3>Admin Login</h3>
+  <input id="email" placeholder="Email">
+  <input id="password" type="password" placeholder="Password">
+  <button onclick="login()">Login</button>
 </div>
 
+<!-- POST FORM -->
 <div id="postForm" class="post-card" style="display:none;">
+  <h3>Post Gossip</h3>
   <input id="postTitle" placeholder="Title">
-  <textarea id="postBody" placeholder="Caption"></textarea>
-  <input type="file" id="postImageFile" accept="image/*">
-  <input id="postImageUrl" placeholder="Or image URL">
+  <textarea id="postBody" placeholder="Write the gossip..."></textarea>
+  <input id="postImage" placeholder="Image URL (optional)">
   <button onclick="addPost()">Post</button>
-  <button onclick="logout()" style="background:#ccc;color:#333;">Logout</button>
+  <button class="secondary" onclick="logout()">Logout</button>
 </div>
 
+<!-- POSTS -->
 <div class="posts-grid" id="posts"></div>
 
-<script>
-const postsDiv = document.getElementById("posts");
-
-    location.reload();
-  } else alert("Wrong password");
-}
-
-function logout() {
-  location.reload();
-}
-
-  loginBox.style.display = "none";
-  postForm.style.display = "block";
-}
-
-function loadPosts() {
-  postsDiv.innerHTML = "";
-  posts.forEach((p, i) => {
-    postsDiv.innerHTML += `
-      <div class="post-card">
-        <h3>${p.title}</h3>
-        ${p.image ? `<img src="${p.image}">` : ""}
-        <p>${p.body}</p>
-      </div>
-    `;
-  });
-}
-
-function addPost() {
-  const title = postTitle.value;
-  const body = postBody.value;
-  const file = postImageFile.files[0];
-  const url = postImageUrl.value;
-
-  if (!title || !body) return alert("Fill everything");
-
-  if (file) {
-    const r = new FileReader();
-    r.onload = e => save(title, body, e.target.result);
-    r.readAsDataURL(file);
-  } else save(title, body, url || null);
-}
-
-function save(title, body, image) {
-  posts.unshift({ title, body, image });
-  location.reload();
-}
-
-function del(i) {
-  if (!confirm("Delete this post?")) return;
-  posts.splice(i,1);
-  loadPosts();
-}
-
-loadPosts();
-</script>
-
-</body>
-</html>
-
-<script>
-fetch("https://raw.githubusercontent.com/imGossipGirl/gossip-girl-data/refs/heads/main/posts.json")
-  .then(res => res.json())
-  .then(posts => {
-    const container = document.querySelector(".posts-grid");
-    container.innerHTML = "";
-
-    posts.forEach(post => {
-      const card = document.createElement("div");
-      card.className = "post-card";
-
-      card.innerHTML = `
-        <h3>${post.title}</h3>
-        ${post.image ? `<img src="${post.image}" style="width:100%;border-radius:10px;margin:10px 0;">` : ""}
-        <p>${post.body}</p>
-      `;
-
-      container.prepend(card);
-    });
-  });
-</script>
-
+<!-- FIREBASE -->
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
 
 <script>
-/* ===== FIREBASE INIT ===== */
 firebase.initializeApp({
   apiKey: "AIzaSyAG70-TmzFjnvgZhRkPR1DuDOrTComfwsc",
   authDomain: "gossip-girl-4e394.firebaseapp.com",
@@ -330,16 +121,14 @@ firebase.initializeApp({
 const auth = firebase.auth();
 const db = firebase.firestore();
 
-/* ===== ELEMENTS ===== */
 const loginBox = document.getElementById("loginBox");
 const postForm = document.getElementById("postForm");
 const postsDiv = document.getElementById("posts");
 
-/* ===== AUTH ===== */
 function login() {
   auth.signInWithEmailAndPassword(
-    document.getElementById("email").value,
-    document.getElementById("password").value
+    email.value,
+    password.value
   ).catch(err => alert(err.message));
 }
 
@@ -352,34 +141,27 @@ auth.onAuthStateChanged(user => {
   postForm.style.display = user ? "block" : "none";
 });
 
-/* ===== ADD POST ===== */
 function addPost() {
-  const title = postTitle.value;
-  const body = postBody.value;
-  const image = postImageUrl.value;
-
-  if (!title || !body) {
-    alert("Fill everything.");
+  if (!postTitle.value || !postBody.value) {
+    alert("Fill everything");
     return;
   }
 
   db.collection("posts").add({
-    title,
-    body,
-    image: image || "",
+    title: postTitle.value,
+    body: postBody.value,
+    image: postImage.value || "",
     time: Date.now()
   });
 
   postTitle.value = "";
   postBody.value = "";
-  postImageUrl.value = "";
+  postImage.value = "";
 }
 
-/* ===== LOAD POSTS (PUBLIC) ===== */
 db.collection("posts").orderBy("time", "desc")
 .onSnapshot(snapshot => {
   postsDiv.innerHTML = "";
-
   snapshot.forEach(doc => {
     const p = doc.data();
     postsDiv.innerHTML += `
@@ -393,10 +175,12 @@ db.collection("posts").orderBy("time", "desc")
   });
 });
 
-/* ===== DELETE ===== */
 function deletePost(id) {
-  if (confirm("Delete this post?")) {
+  if (confirm("Delete post?")) {
     db.collection("posts").doc(id).delete();
   }
 }
 </script>
+
+</body>
+</html>
