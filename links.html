@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gossip Girl — Spotted Map</title>
+
+<link rel="icon" href="https://upload.wikimedia.org/wikipedia/commons/thumb/6/64/Gossip_girl_titlecard.svg/1200px-Gossip_girl_titlecard.svg.png">
+
+<!-- Leaflet -->
+<link
+  rel="stylesheet"
+  href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+/>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+
+<style>
+body, html {
+  margin: 0;
+  padding: 0;
+  font-family: 'Roboto', sans-serif;
+  background: url('https://primary.jwwb.nl/public/v/f/z/temp-drvbpvglefwdvbrbqnho/ur18xk/IMG_1169.jpg?enable-io=true&enable=upscale&crop=1600%2C795%2Cx0%2Cy0%2Csafe&width=980&height=487')
+    no-repeat center center fixed;
+  background-size: cover;
+}
+
+.container {
+  max-width: 900px;
+  margin: 30px auto;
+  padding: 20px;
+}
+
+.card {
+  background: rgba(255,255,255,0.96);
+  border-radius: 14px;
+  padding: 20px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.4);
+  margin-bottom: 20px;
+}
+
+h3 {
+  font-family: 'Playfair Display', serif;
+}
+
+#map {
+  height: 450px;
+  border-radius: 12px;
+}
+
+input, textarea {
+  width: 100%;
+  padding: 8px;
+  margin-bottom: 8px;
+}
+
+button {
+  width: 100%;
+  padding: 8px;
+  background: #111;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+button.secondary {
+  background: transparent;
+  color: #555;
+  border: 1px solid #ccc;
+  margin-top: 6px;
+}
+
+.delete-btn {
+  background: #7a2c2c;
+  margin-top: 6px;
+}
+</style>
+</head>
+<body>
+
+<div class="container">
+
+  <div class="card" style="text-align:center;">
+    <button class="secondary" onclick="window.location.href='index.html'">
+      ← Back to Home
+    </button>
+  </div>
+
+  <div class="card">
+    <h3>Spotted Map</h3>
+    <div id="map"></div>
+  </div>
+
+  <!-- Admin Login -->
+  <div id="adminLogin" class="card" style="display:none;">
+    <h3>Gossip Girl Access</h3>
+    <input type="password" id="adminPass" placeholder="Password">
+    <button onclick="loginAdmin()">Enter</button>
+  </div>
+
+  <!-- Admin Form -->
+  <div id="adminForm" class="card" style="display:none;">
+    <h3>Add Sighting</h3>
+    <input id="spotName" placeholder="Who was spotted?">
+    <textarea id="spotNote" placeholder="Details"></textarea>
+    <input id="spotImage" placeholder="Image URL">
+    <button onclick="saveSpot()">Save Sighting</button>
+    <button class="secondary" onclick="logoutAdmin()">Logout</button>
+  </div>
+
+</div>
+
+<script>
+/* ===== CONFIG ===== */
+const ADMIN_PASSWORD = "xoxo";
+let selectedLatLng = null;
+
+/* ===== MAP ===== */
+const map = L.map("map").setView([40.7831, -73.9712], 12); // Manhattan
+
+L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+  attribution: "© OpenStreetMap"
+}).addTo(map);
+
+let markers = [];
+
+/* ===== AUTH ===== */
+function loginAdmin() {
+  if (adminPass.value === ADMIN_PASSWORD) {
+    localStorage.setItem("ggAdmin", "true");
+    adminLogin.style.display = "none";
+    adminForm.style.display = "block";
+  } else {
+    alert("Wrong password.");
+  }
+}
+
+function logoutAdmin() {
+  localStorage.removeItem("ggAdmin");
+  location.reload();
+}
+
+/* ===== SPOTS ===== */
+function loadSpots() {
+  const spots = JSON.parse(localStorage.getItem("ggSpots")) || [];
+  markers.forEach(m => map.removeLayer(m));
+  markers = [];
+
+  spots.forEach((s, index) => {
+    const marker = L.marker([s.lat, s.lng]).addTo(map);
+    marker.bindPopup(`
+      <strong>${s.name}</strong><br>
+      ${s.note || ""}<br>
+      ${s.image ? `<img src="${s.image}" style="width:150px;margin-top:6px;">` : ""}
+      ${localStorage.getItem("ggAdmin") === "true"
+        ? `<br><button onclick="deleteSpot(${index})">Delete</button>`
+        : ""}
+    `);
+    markers.push(marker);
+  });
+}
+
+map.on("click", e => {
+  if (localStorage.getItem("ggAdmin") !== "true") return;
+  selectedLatLng = e.latlng;
+  alert("Location selected. Fill out the form to add the sighting.");
+});
+
+/* ===== SAVE ===== */
+function saveSpot() {
+  if (!selectedLatLng) {
+    alert("Click a location on the map first.");
+    return;
+  }
+
+  const spots = JSON.parse(localStorage.getItem("ggSpots")) || [];
+  spots.push({
+    name: spotName.value,
+    note: spotNote.value,
+    image: spotImage.value,
+    lat: selectedLatLng.lat,
+    lng: selectedLatLng.lng
+  });
+
+  localStorage.setItem("ggSpots", JSON.stringify(spots));
+  loadSpots();
+
+  spotName.value = "";
+  spotNote.value = "";
+  spotImage.value = "";
+  selectedLatLng = null;
+}
+
+/* ===== DELETE ===== */
+function deleteSpot(index) {
+  if (!confirm("Delete this sighting?")) return;
+  const spots = JSON.parse(localStorage.getItem("ggSpots")) || [];
+  spots.splice(index, 1);
+  localStorage.setItem("ggSpots", JSON.stringify(spots));
+  loadSpots();
+}
+
+/* ===== INIT ===== */
+window.onload = () => {
+  loadSpots();
+  if (localStorage.getItem("ggAdmin") === "true") {
+    adminForm.style.display = "block";
+  } else {
+    adminLogin.style.display = "block";
+  }
+};
+</script>
+
+</body>
+</html>
