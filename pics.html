@@ -9,19 +9,24 @@
 <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
 
 <style>
-body, html {
+/* ===== BASE ===== */
+body {
   margin: 0;
-  padding: 0;
   font-family: 'Roboto', sans-serif;
-  background: url('https://primary.jwwb.nl/public/v/f/z/temp-drvbpvglefwdvbrbqnho/ur18xk/IMG_1169.jpg') no-repeat center center fixed;
+  background: url('https://primary.jwwb.nl/public/v/f/z/temp-drvbpvglefwdvbrbqnho/ur18xk/IMG_1169.jpg')
+    no-repeat center center fixed;
   background-size: cover;
 }
 
-/* Header */
-.title { display:flex; justify-content:center; margin-top:20px; }
-.title img { width:300px; }
+/* ===== TITLE ===== */
+.title {
+  display: flex;
+  justify-content: center;
+  margin: 20px 0;
+}
+.title img { width: 300px; }
 
-/* Sidebar */
+/* ===== SIDEBAR ===== */
 .right-section {
   position: fixed;
   right: 20px;
@@ -29,10 +34,12 @@ body, html {
   display: flex;
   flex-direction: column;
   gap: 18px;
+  z-index: 50;
 }
 
 .circle {
-  width: 60px; height: 60px;
+  width: 60px;
+  height: 60px;
   border-radius: 50%;
   background: rgba(185,179,130,.85);
   color: white;
@@ -43,10 +50,14 @@ body, html {
   padding-bottom: 5px;
   cursor: pointer;
   position: relative;
+  transition: transform .2s;
 }
 
+.circle:hover { transform: scale(1.05); }
+
 .inner-circle {
-  width: 40px; height: 40px;
+  width: 40px;
+  height: 40px;
   border-radius: 50%;
   background-size: cover;
   background-position: center;
@@ -54,26 +65,36 @@ body, html {
   top: 6px;
 }
 
-.inner-circle.custom { background-image: url('https://t3.ftcdn.net/jpg/03/58/90/78/360_F_358907879_Vdu96gF4XVhjCZxN2kCG0THTsSQi8IhT.jpg'); }
-.inner-circle.home { background-image: url('https://upload.wikimedia.org/wikipedia/commons/3/33/Serena_van_der_Woodsen.jpg'); }
-.inner-circle.posts { background-image: url('https://upload.wikimedia.org/wikipedia/commons/8/85/Chuck_Bass_Gossip_Girl.jpg'); }
-.inner-circle.pics  { background-image: url('https://upload.wikimedia.org/wikipedia/commons/0/01/Blair_Waldorf.png'); }
-.inner-circle.links { background-image: url('https://upload.wikimedia.org/wikipedia/commons/d/d4/Ivy_Dickens.png'); }
+.inner-circle.custom {
+  background-image: url("https://i.pinimg.com/736x/cf/84/3e/cf843e8585e57a907af82bb5a86fae48.jpg");
+}
+.inner-circle.home {
+  background-image: url("https://i.pinimg.com/736x/24/24/95/2424950fe4aa72741f9fbb15da01db8a.jpg");
+}
+.inner-circle.posts {
+  background-image: url("https://i.pinimg.com/736x/c3/4f/8f/c34f8ff1b25bcc61a84a116b18d6da42.jpg");
+}
+.inner-circle.pics {
+  background-image: url("https://i.pinimg.com/736x/a5/34/d1/a534d1d47cefbff4e8278618e8909e7e.jpg");
+}
+.inner-circle.links {
+  background-image: url("https://i.pinimg.com/736x/75/ea/b6/75eab607a119fd5a449339dfdcd0ab57.jpg");
+}
 
-/* Cards */
+/* ===== CARDS ===== */
 .card {
-  max-width: 600px;
+  max-width: 420px;
   margin: 30px auto;
-  background: rgba(255,255,255,.95);
+  background: rgba(255,255,255,0.95);
   padding: 20px;
   border-radius: 14px;
-  box-shadow: 0 10px 25px rgba(0,0,0,.4);
+  box-shadow: 0 10px 25px rgba(0,0,0,0.4);
 }
 
 .card img {
   width: 100%;
   border-radius: 10px;
-  margin-bottom: 10px;
+  margin-bottom: 8px;
 }
 
 .card p {
@@ -82,54 +103,47 @@ body, html {
   margin: 0;
 }
 
-input, button {
+/* ===== FORMS ===== */
+input {
   width: 100%;
   padding: 10px;
   margin-bottom: 10px;
   border-radius: 6px;
   border: 1px solid #ccc;
-  font-family: inherit;
 }
 
 button {
+  width: 100%;
+  padding: 10px;
+  border: none;
+  border-radius: 6px;
   background: black;
   color: white;
-  border: none;
   cursor: pointer;
 }
 
 button.secondary {
-  background: transparent;
-  border: 1px solid #ccc;
-  color: #444;
+  background: #ccc;
+  color: #333;
+  margin-top: 8px;
 }
 
 .delete-btn {
   background: #7a2c2c;
-  font-size: .75rem;
-}
-.delete-btn:hover { background:#5a1f1f; }
-
-#errorBox {
-  display:none;
-  max-width:600px;
-  margin: 10px auto -10px;
-  padding: 12px 16px;
-  border-radius: 10px;
-  background: rgba(255,255,255,.92);
-  box-shadow: 0 10px 25px rgba(0,0,0,.25);
-  font-size: .9rem;
-  color: #7a2c2c;
+  margin-top: 10px;
+  font-size: 0.75rem;
 }
 </style>
 </head>
 
 <body>
 
+<!-- TITLE -->
 <div class="title">
   <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/6/64/Gossip_girl_titlecard.svg/1200px-Gossip_girl_titlecard.svg.png">
 </div>
 
+<!-- SIDEBAR -->
 <div class="right-section">
   <div class="circle" onclick="location.href='custom.html'"><div class="inner-circle custom"></div>custom</div>
   <div class="circle" onclick="location.href='index.html'"><div class="inner-circle home"></div>home</div>
@@ -138,35 +152,32 @@ button.secondary {
   <div class="circle" onclick="location.href='links.html'"><div class="inner-circle links"></div>links</div>
 </div>
 
-<div id="errorBox"></div>
-
-<!-- LOGIN (GMAIL/EMAIL) -->
+<!-- LOGIN -->
 <div id="loginBox" class="card">
-  <h3 style="margin-top:0; font-family:'Playfair Display',serif;">Admin Login</h3>
+  <h3>Admin Login</h3>
   <input id="email" placeholder="Email">
   <input id="password" type="password" placeholder="Password">
   <button onclick="login()">Login</button>
 </div>
 
-<!-- ADD PIC (ADMIN ONLY) -->
+<!-- ADD PIC -->
 <div id="picForm" class="card" style="display:none;">
-  <h3 style="margin-top:0; font-family:'Playfair Display',serif;">Add New Pic</h3>
-  <input id="picUrl" placeholder="Image URL (required)">
-  <input id="picCaption" placeholder="Caption (optional)">
-  <button onclick="addPic()">Post Pic</button>
+  <h3>Add New Pic</h3>
+  <input id="picImage" placeholder="Image URL">
+  <input id="picCaption" placeholder="Caption">
+  <button onclick="addPic()">Post</button>
   <button class="secondary" onclick="logout()">Logout</button>
 </div>
 
-<!-- PICS LIST -->
+<!-- PICS -->
 <div id="pics"></div>
 
-<!-- Firebase -->
+<!-- FIREBASE -->
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
 
 <script>
-/* ===== FIREBASE INIT ===== */
 firebase.initializeApp({
   apiKey: "AIzaSyAG70-TmzFjnvgZhRkPR1DuDOrTComfwsc",
   authDomain: "gossip-girl-4e394.firebaseapp.com",
@@ -176,97 +187,68 @@ firebase.initializeApp({
 const auth = firebase.auth();
 const db = firebase.firestore();
 
-/* ===== ELEMENTS ===== */
 const loginBox = document.getElementById("loginBox");
-const picForm  = document.getElementById("picForm");
-const picsDiv  = document.getElementById("pics");
-const errorBox = document.getElementById("errorBox");
+const picForm = document.getElementById("picForm");
+const picsDiv = document.getElementById("pics");
 
-/* ===== HELPERS ===== */
-function showError(msg) {
-  errorBox.style.display = "block";
-  errorBox.textContent = msg;
-}
-function clearError() {
-  errorBox.style.display = "none";
-  errorBox.textContent = "";
-}
-
-/* ===== AUTH ===== */
+/* LOGIN */
 function login() {
-  clearError();
-  const em = document.getElementById("email").value.trim();
-  const pw = document.getElementById("password").value;
-
-  if (!em || !pw) return showError("Enter email + password.");
-
-  auth.signInWithEmailAndPassword(em, pw)
-    .catch(err => showError(err.message));
+  auth.signInWithEmailAndPassword(email.value, password.value)
+    .catch(err => alert(err.message));
 }
 
 function logout() {
-  auth.signOut().catch(err => showError(err.message));
+  auth.signOut();
 }
 
-/* show/hide forms */
+/* AUTH STATE */
 auth.onAuthStateChanged(user => {
-  if (user) {
-    loginBox.style.display = "none";
-    picForm.style.display = "block";
-  } else {
-    loginBox.style.display = "block";
-    picForm.style.display = "none";
-  }
+  loginBox.style.display = user ? "none" : "block";
+  picForm.style.display = user ? "block" : "none";
 });
 
-/* ===== ADD PIC ===== */
+/* ADD PIC */
 function addPic() {
-  clearError();
-  const image = document.getElementById("picUrl").value.trim();
-  const caption = document.getElementById("picCaption").value.trim();
-
-  if (!image) return showError("Image URL is required.");
+  if (!picImage.value) {
+    alert("Image URL required");
+    return;
+  }
 
   db.collection("pics").add({
-    image,
-    caption,
+    image: picImage.value,
+    caption: picCaption.value || "",
     time: Date.now()
-  }).then(() => {
-    document.getElementById("picUrl").value = "";
-    document.getElementById("picCaption").value = "";
-  }).catch(err => showError(err.message));
+  });
+
+  picImage.value = "";
+  picCaption.value = "";
 }
 
-/* ===== LIVE LOAD PICS (PUBLIC) ===== */
-db.collection("pics").orderBy("time","desc").onSnapshot(snapshot => {
+/* LOAD PICS */
+db.collection("pics").orderBy("time", "desc")
+.onSnapshot(snapshot => {
   picsDiv.innerHTML = "";
   snapshot.forEach(doc => {
     const p = doc.data();
-    const canDelete = !!auth.currentUser;
-
-    const card = document.createElement("div");
-    card.className = "card";
-    card.innerHTML = `
-      <img src="${p.image}" alt="">
-      <p>${p.caption ? p.caption : ""}</p>
-      ${canDelete ? `<button class="delete-btn" data-id="${doc.id}">Delete</button>` : ""}
+    picsDiv.innerHTML += `
+      <div class="card">
+        <img src="${p.image}">
+        <p>${p.caption}</p>
+        ${auth.currentUser ? `<button class="delete-btn" onclick="deletePic('${doc.id}')">Delete</button>` : ""}
+      </div>
     `;
-    picsDiv.appendChild(card);
   });
-
-  // bind delete buttons
-  document.querySelectorAll(".delete-btn").forEach(btn => {
-    btn.onclick = () => {
-      const id = btn.getAttribute("data-id");
-      if (!confirm("Delete this pic?")) return;
-      db.collection("pics").doc(id).delete().catch(err => showError(err.message));
-    };
-  });
-}, err => {
-  showError(err.message);
 });
+
+/* DELETE */
+function deletePic(id) {
+  if (confirm("Delete this pic?")) {
+    db.collection("pics").doc(id).delete();
+  }
+}
 </script>
 
 </body>
 </html>
+
 
