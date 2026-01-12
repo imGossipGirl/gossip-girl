@@ -135,7 +135,6 @@ button {
 <div id="loginBox" class="post-card">
   <h3>Admin Access</h3>
   <input type="password" id="adminPass" placeholder="Password">
-  <button onclick="unlock()">Enter</button>
 </div>
 
 <div id="postForm" class="post-card" style="display:none;">
@@ -150,43 +149,34 @@ button {
 <div class="posts-grid" id="posts"></div>
 
 <script>
-const ADMIN_PASSWORD = "xoxo";
 const postsDiv = document.getElementById("posts");
 
-function unlock() {
-  if (adminPass.value === ADMIN_PASSWORD) {
-    localStorage.setItem("ggAdmin", "true");
     location.reload();
   } else alert("Wrong password");
 }
 
 function logout() {
-  localStorage.removeItem("ggAdmin");
   location.reload();
 }
 
-if (localStorage.getItem("ggAdmin") === "true") {
   loginBox.style.display = "none";
   postForm.style.display = "block";
 }
 
 function loadPosts() {
   postsDiv.innerHTML = "";
-  const posts = JSON.parse(localStorage.getItem("ggPosts")) || [];
   posts.forEach((p, i) => {
     postsDiv.innerHTML += `
       <div class="post-card">
         <h3>${p.title}</h3>
         ${p.image ? `<img src="${p.image}">` : ""}
         <p>${p.body}</p>
-        ${localStorage.getItem("ggAdmin")==="true" ? `<button class="delete-btn" onclick="del(${i})">Delete</button>` : ""}
       </div>
     `;
   });
 }
 
 function addPost() {
-  const posts = JSON.parse(localStorage.getItem("ggPosts")) || [];
   const title = postTitle.value;
   const body = postBody.value;
   const file = postImageFile.files[0];
@@ -202,17 +192,13 @@ function addPost() {
 }
 
 function save(title, body, image) {
-  const posts = JSON.parse(localStorage.getItem("ggPosts")) || [];
   posts.unshift({ title, body, image });
-  localStorage.setItem("ggPosts", JSON.stringify(posts));
   location.reload();
 }
 
 function del(i) {
   if (!confirm("Delete this post?")) return;
-  const posts = JSON.parse(localStorage.getItem("ggPosts"));
   posts.splice(i,1);
-  localStorage.setItem("ggPosts", JSON.stringify(posts));
   loadPosts();
 }
 
@@ -242,4 +228,90 @@ fetch("https://raw.githubusercontent.com/imGossipGirl/gossip-girl-data/refs/head
       container.prepend(card);
     });
   });
+</script>
+
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+
+<script>
+/* ===== FIREBASE INIT ===== */
+firebase.initializeApp({
+  apiKey: "AIzaSyAG70-TmzFjnvgZhRkPR1DuDOrTComfwsc",
+  authDomain: "gossip-girl-4e394.firebaseapp.com",
+  projectId: "gossip-girl-4e394"
+});
+
+const auth = firebase.auth();
+const db = firebase.firestore();
+
+/* ===== ELEMENTS ===== */
+const loginBox = document.getElementById("loginBox");
+const postForm = document.getElementById("postForm");
+const postsDiv = document.getElementById("posts");
+
+/* ===== AUTH ===== */
+function login() {
+  auth.signInWithEmailAndPassword(
+    document.getElementById("email").value,
+    document.getElementById("password").value
+  ).catch(err => alert(err.message));
+}
+
+function logout() {
+  auth.signOut();
+}
+
+auth.onAuthStateChanged(user => {
+  loginBox.style.display = user ? "none" : "block";
+  postForm.style.display = user ? "block" : "none";
+});
+
+/* ===== ADD POST ===== */
+function addPost() {
+  const title = postTitle.value;
+  const body = postBody.value;
+  const image = postImageUrl.value;
+
+  if (!title || !body) {
+    alert("Fill everything.");
+    return;
+  }
+
+  db.collection("posts").add({
+    title,
+    body,
+    image: image || "",
+    time: Date.now()
+  });
+
+  postTitle.value = "";
+  postBody.value = "";
+  postImageUrl.value = "";
+}
+
+/* ===== LOAD POSTS (PUBLIC) ===== */
+db.collection("posts").orderBy("time", "desc")
+.onSnapshot(snapshot => {
+  postsDiv.innerHTML = "";
+
+  snapshot.forEach(doc => {
+    const p = doc.data();
+    postsDiv.innerHTML += `
+      <div class="post-card">
+        <h3>${p.title}</h3>
+        ${p.image ? `<img src="${p.image}">` : ""}
+        <p>${p.body}</p>
+        ${auth.currentUser ? `<button class="delete-btn" onclick="deletePost('${doc.id}')">Delete</button>` : ""}
+      </div>
+    `;
+  });
+});
+
+/* ===== DELETE ===== */
+function deletePost(id) {
+  if (confirm("Delete this post?")) {
+    db.collection("posts").doc(id).delete();
+  }
+}
 </script>
