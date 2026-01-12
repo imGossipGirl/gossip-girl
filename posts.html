@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gossip Girl – Pics</title>
+<link rel="icon" href="https://upload.wikimedia.org/wikipedia/commons/thumb/6/64/Gossip_girl_titlecard.svg/1200px-Gossip_girl_titlecard.svg.png">
+
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+
+<style>
+body, html {
+  margin: 0;
+  padding: 0;
+  font-family: 'Roboto', sans-serif;
+  background: url('https://primary.jwwb.nl/public/v/f/z/temp-drvbpvglefwdvbrbqnho/ur18xk/IMG_1169.jpg') no-repeat center center fixed;
+  background-size: cover;
+}
+
+/* Header */
+.title {
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+}
+.title img { width: 300px; }
+
+/* Sidebar */
+.right-section {
+  position: fixed;
+  right: 20px;
+  top: 140px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.circle {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background: rgba(185,179,130,.85);
+  color: white;
+  font-size: .75rem;
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  padding-bottom: 5px;
+  cursor: pointer;
+  position: relative;
+}
+
+.inner-circle {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-size: cover;
+  background-position: center;
+  position: absolute;
+  top: 6px;
+}
+
+.inner-circle.custom { background-image: url('https://t3.ftcdn.net/jpg/03/58/90/78/360_F_358907879_Vdu96gF4XVhjCZxN2kCG0THTsSQi8IhT.jpg'); }
+.inner-circle.home { background-image: url('https://upload.wikimedia.org/wikipedia/commons/3/33/Serena_van_der_Woodsen.jpg'); }
+.inner-circle.posts { background-image: url('https://upload.wikimedia.org/wikipedia/commons/8/85/Chuck_Bass_Gossip_Girl.jpg'); }
+.inner-circle.pics { background-image: url('https://upload.wikimedia.org/wikipedia/commons/0/01/Blair_Waldorf.png'); }
+.inner-circle.links { background-image: url('https://upload.wikimedia.org/wikipedia/commons/d/d4/Ivy_Dickens.png'); }
+
+/* Admin / Posts */
+.post-card {
+  max-width: 420px;
+  margin: 30px auto;
+  background: rgba(255,255,255,.95);
+  padding: 20px;
+  border-radius: 14px;
+  box-shadow: 0 10px 25px rgba(0,0,0,.4);
+}
+
+.post-card img {
+  width: 100%;
+  border-radius: 10px;
+  margin: 10px 0;
+}
+
+.posts-grid {
+  max-width: 600px;
+  margin: 40px auto;
+  display: flex;
+  flex-direction: column;
+  gap: 25px;
+}
+
+input, textarea {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 10px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+}
+
+button {
+  width: 100%;
+  padding: 10px;
+  border: none;
+  border-radius: 6px;
+  background: black;
+  color: white;
+  cursor: pointer;
+}
+
+.delete-btn {
+  margin-top: 10px;
+  background: #7a2c2c;
+  font-size: .75rem;
+}
+
+.delete-btn:hover { background: #5a1f1f; }
+</style>
+</head>
+
+<body>
+
+<div class="title">
+  <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/6/64/Gossip_girl_titlecard.svg/1200px-Gossip_girl_titlecard.svg.png">
+</div>
+
+<div class="right-section">
+  <div class="circle" onclick="location.href='custom.html'"><div class="inner-circle custom"></div>custom</div>
+  <div class="circle" onclick="location.href='index.html'"><div class="inner-circle home"></div>home</div>
+  <div class="circle" onclick="location.href='posts.html'"><div class="inner-circle posts"></div>posts</div>
+  <div class="circle"><div class="inner-circle pics"></div>pics</div>
+  <div class="circle" onclick="location.href='links.html'"><div class="inner-circle links"></div>links</div>
+</div>
+
+<div id="loginBox" class="post-card">
+  <h3>Admin Access</h3>
+  <input type="password" id="adminPass" placeholder="Password">
+  <button onclick="unlock()">Enter</button>
+</div>
+
+<div id="postForm" class="post-card" style="display:none;">
+  <input id="postTitle" placeholder="Title">
+  <textarea id="postBody" placeholder="Caption"></textarea>
+  <input type="file" id="postImageFile" accept="image/*">
+  <input id="postImageUrl" placeholder="Or image URL">
+  <button onclick="addPost()">Post</button>
+  <button onclick="logout()" style="background:#ccc;color:#333;">Logout</button>
+</div>
+
+<div class="posts-grid" id="posts"></div>
+
+<script>
+const ADMIN_PASSWORD = "xoxo";
+const postsDiv = document.getElementById("posts");
+
+function unlock() {
+  if (adminPass.value === ADMIN_PASSWORD) {
+    localStorage.setItem("ggAdmin", "true");
+    location.reload();
+  } else alert("Wrong password");
+}
+
+function logout() {
+  localStorage.removeItem("ggAdmin");
+  location.reload();
+}
+
+if (localStorage.getItem("ggAdmin") === "true") {
+  loginBox.style.display = "none";
+  postForm.style.display = "block";
+}
+
+function loadPosts() {
+  postsDiv.innerHTML = "";
+  const posts = JSON.parse(localStorage.getItem("ggPosts")) || [];
+  posts.forEach((p, i) => {
+    postsDiv.innerHTML += `
+      <div class="post-card">
+        <h3>${p.title}</h3>
+        ${p.image ? `<img src="${p.image}">` : ""}
+        <p>${p.body}</p>
+        ${localStorage.getItem("ggAdmin")==="true" ? `<button class="delete-btn" onclick="del(${i})">Delete</button>` : ""}
+      </div>
+    `;
+  });
+}
+
+function addPost() {
+  const posts = JSON.parse(localStorage.getItem("ggPosts")) || [];
+  const title = postTitle.value;
+  const body = postBody.value;
+  const file = postImageFile.files[0];
+  const url = postImageUrl.value;
+
+  if (!title || !body) return alert("Fill everything");
+
+  if (file) {
+    const r = new FileReader();
+    r.onload = e => save(title, body, e.target.result);
+    r.readAsDataURL(file);
+  } else save(title, body, url || null);
+}
+
+function save(title, body, image) {
+  const posts = JSON.parse(localStorage.getItem("ggPosts")) || [];
+  posts.unshift({ title, body, image });
+  localStorage.setItem("ggPosts", JSON.stringify(posts));
+  location.reload();
+}
+
+function del(i) {
+  if (!confirm("Delete this post?")) return;
+  const posts = JSON.parse(localStorage.getItem("ggPosts"));
+  posts.splice(i,1);
+  localStorage.setItem("ggPosts", JSON.stringify(posts));
+  loadPosts();
+}
+
+loadPosts();
+</script>
+
+</body>
+</html>
+
+<script>
+fetch("https://raw.githubusercontent.com/imGossipGirl/gossip-girl-data/refs/heads/main/posts.json")
+  .then(res => res.json())
+  .then(posts => {
+    const container = document.querySelector(".posts-grid");
+    container.innerHTML = "";
+
+    posts.forEach(post => {
+      const card = document.createElement("div");
+      card.className = "post-card";
+
+      card.innerHTML = `
+        <h3>${post.title}</h3>
+        ${post.image ? `<img src="${post.image}" style="width:100%;border-radius:10px;margin:10px 0;">` : ""}
+        <p>${post.body}</p>
+      `;
+
+      container.prepend(card);
+    });
+  });
+</script>
